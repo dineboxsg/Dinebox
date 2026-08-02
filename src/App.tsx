@@ -1,0 +1,75 @@
+import { AuthProvider } from '@/lib/auth';
+import { useRouter, matchRoute } from '@/lib/router';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { HomePage } from '@/pages/HomePage';
+import { TrendingPage } from '@/pages/TrendingPage';
+import { DealsPage } from '@/pages/DealsPage';
+import { DineBox50Page } from '@/pages/DineBox50Page';
+import { RestaurantProfilePage } from '@/pages/RestaurantProfilePage';
+import { SearchPage } from '@/pages/SearchPage';
+import { ForBusinessesPage } from '@/pages/ForBusinessesPage';
+import { MerchantLoginPage, MerchantSignupPage } from '@/pages/MerchantAuth';
+import { MerchantDashboard } from '@/pages/MerchantDashboard';
+import { AdminDashboard, AdminLoginPage } from '@/pages/AdminDashboard';
+
+function AppContent() {
+  const { route } = useRouter();
+  const path = route.path;
+
+  // Admin routes (no public header/footer)
+  if (path === '/admin') return <AdminDashboard />;
+  if (path === '/admin/login') return <AdminLoginPage />;
+
+  // Merchant routes (no public header/footer)
+  if (path === '/merchant') return <MerchantDashboard />;
+  if (path === '/merchant/login') return <MerchantLoginPage />;
+  if (path === '/merchant/signup') return <MerchantSignupPage />;
+
+  // Public routes (with header/footer)
+  let page: React.ReactNode;
+  let showChrome = true;
+
+  if (path === '/') {
+    page = <HomePage />;
+  } else if (path === '/trending') {
+    page = <TrendingPage />;
+  } else if (path === '/deals') {
+    page = <DealsPage />;
+  } else if (path === '/dinebox-50') {
+    page = <DineBox50Page />;
+  } else if (path === '/search') {
+    page = <SearchPage query={route.query.get('q') || ''} />;
+  } else if (path === '/for-businesses') {
+    page = <ForBusinessesPage />;
+  } else {
+    const restMatch = matchRoute('/d/:slug', path);
+    if (restMatch) {
+      page = <RestaurantProfilePage slug={restMatch.slug} dealId={route.query.get('deal') || undefined} />;
+    } else {
+      page = (
+        <div className="pt-32 pb-16 text-center container-page">
+          <h1 className="font-serif text-4xl font-bold text-charcoal mb-2">404</h1>
+          <p className="text-muted-text mb-6">This page doesn't exist.</p>
+          <button onClick={() => (window.location.hash = '/')} className="btn-primary">Back to DineBox</button>
+        </div>
+      );
+    }
+  }
+
+  return (
+    <>
+      {showChrome && <Header />}
+      <main>{page}</main>
+      {showChrome && <Footer />}
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}

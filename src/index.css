@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-warm-white text-charcoal font-sans;
+  }
+  * {
+    @apply border-beige/40;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-charcoal text-white font-medium text-sm transition-all duration-200 hover:bg-charcoal-700 active:scale-95;
+  }
+  .btn-orange {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-orange text-white font-medium text-sm transition-all duration-200 hover:bg-orange-600 active:scale-95;
+  }
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full border border-charcoal/15 text-charcoal font-medium text-sm transition-all duration-200 hover:border-charcoal/30 hover:bg-cream active:scale-95;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-charcoal font-medium text-sm transition-all duration-200 hover:bg-cream active:scale-95;
+  }
+  .input-field {
+    @apply w-full px-4 py-3 rounded-2xl border border-beige bg-white text-charcoal placeholder:text-muted-text/60 focus:outline-none focus:border-orange/50 focus:ring-2 focus:ring-orange/10 transition-all duration-200;
+  }
+  .section-title {
+    @apply font-serif text-2xl sm:text-3xl font-semibold text-charcoal;
+  }
+  .section-subtitle {
+    @apply text-sm sm:text-base text-muted-text mt-1;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #EFE6D8;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D9CFBE;
+}
+
+/* Hide scrollbar for horizontal scroll containers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
