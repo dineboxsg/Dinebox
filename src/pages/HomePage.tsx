@@ -176,7 +176,7 @@ export function HomePage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {rankings.slice(0, 5).map((rk) => (
+              {rankings.slice(0, 5).map((rk) => rk.restaurant && (
                 <RankingRow key={rk.id} rank={rk.rank} restaurant={rk.restaurant} ranking={rk} />
               ))}
             </div>

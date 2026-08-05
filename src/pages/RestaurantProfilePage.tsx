@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { MapPin, Star, BadgeCheck, Clock, Phone, Globe, Instagram, Facebook, Share2, ArrowLeft, ThumbsUp } from 'lucide-react';
-import { getRestaurantBySlug, getRestaurantPosts, getRestaurantDeals, getMenuCategories, getMenuItems, getRestaurantReviews, getRestaurantAwards, getRestaurantRanking } from '@/lib/api';
-import { trackEvent } from '@/lib/analytics';
+import { getRestaurantBySlug, getRestaurantPosts, getRestaurantDeals, getMenuCategories, getMenuItems, getRestaurantReviews, getRestaurantAwards, getRestaurantRanking, getRecommendationStatus, recommendRestaurant } from '@/lib/api';
+import { getSessionId, trackEvent } from '@/lib/analytics';
 import { navigate } from '@/lib/router';
 import type { Restaurant, Post, Deal, MenuCategory, MenuItem, Review, Award, RankingScore } from '@/lib/types';
 import { PostCard } from '@/components/PostCard';
@@ -10,18 +10,6 @@ import { DealCard } from '@/components/DealCard';
 const dayNames: Record<string, string> = {
   mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday',
 };
-
-const RECOMMENDATIONS_STORAGE_KEY = 'dinebox_recommended_restaurants';
-
-function getRecommendedRestaurantIds(): string[] {
-  try {
-    const storedRecommendations = localStorage.getItem(RECOMMENDATIONS_STORAGE_KEY);
-    const recommendations = storedRecommendations ? JSON.parse(storedRecommendations) : [];
-    return Array.isArray(recommendations) ? recommendations : [];
-  } catch {
-    return [];
-  }
-}
 
 export function RestaurantProfilePage({ slug }: { slug: string; dealId?: string }) {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
@@ -33,6 +21,7 @@ export function RestaurantProfilePage({ slug }: { slug: string; dealId?: string 
   const [awards, setAwards] = useState<Award[]>([]);
   const [ranking, setRanking] = useState<RankingScore | null>(null);
   const [recommended, setRecommended] = useState(false);
+  const [recommendationCount, setRecommendationCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,7 +33,7 @@ export function RestaurantProfilePage({ slug }: { slug: string; dealId?: string 
       setRestaurant(rest);
       if (rest) {
         trackEvent(rest.id, 'profile_view');
-        const [p, d, c, m, r, a, rk] = await Promise.all([
+        const [p, d, c, m, r, a, rk, recommendationStatus] = await Promise.all([
           getRestaurantPosts(rest.id),
           getRestaurantDeals(rest.id),
           getMenuCategories(rest.id),
@@ -52,6 +41,7 @@ export function RestaurantProfilePage({ slug }: { slug: string; dealId?: string 
           getRestaurantReviews(rest.id),
           getRestaurantAwards(rest.id),
           getRestaurantRanking(rest.id),
+          getRecommendationStatus(rest.id, getSessionId()).catch(() => ({ count: 0, recommended: false })),
         ]);
         setPosts(p);
         setDeals(d);
@@ -60,26 +50,25 @@ export function RestaurantProfilePage({ slug }: { slug: string; dealId?: string 
         setReviews(r);
         setAwards(a);
         setRanking(rk);
-        setRecommended(getRecommendedRestaurantIds().includes(rest.id));
+        setRecommended(recommendationStatus.recommended);
+        setRecommendationCount(recommendationStatus.count);
       }
       setLoading(false);
     });
   }, [slug]);
 
-  const handleRecommend = () => {
+  const handleRecommend = async () => {
     if (!restaurant) return;
     if (recommended) return;
 
-    const recommendations = getRecommendedRestaurantIds();
-    if (!recommendations.includes(restaurant.id)) {
-      try {
-        localStorage.setItem(RECOMMENDATIONS_STORAGE_KEY, JSON.stringify([...recommendations, restaurant.id]));
-      } catch {
-        // Local storage may be unavailable in private browsing modes.
-      }
+    try {
+      const result = await recommendRestaurant(restaurant.id, getSessionId());
+      setRecommended(true);
+      setRecommendationCount(result.count);
+      setRanking(result.ranking);
+    } catch {
+      // Keep the button available when the recommendation service is unavailable.
     }
-    setRecommended(true);
-    trackEvent(restaurant.id, 'recommend');
   };
 
   const handleDirections = () => {
@@ -223,7 +212,7 @@ export function RestaurantProfilePage({ slug }: { slug: string; dealId?: string 
             </div>
           )}
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-cream">
-            <span className="text-lg font-bold text-charcoal">{recommended ? 1 : 0}</span>
+            <span className="text-lg font-bold text-charcoal">{recommendationCount}</span>
             <span className="text-sm text-muted-text">Recommendations</span>
           </div>
         </div>

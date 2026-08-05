@@ -65,7 +65,7 @@ export function TrendingPage() {
           <>
             {(filter === 'all' || filter === 'restaurants') && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                {rankings.slice(0, filter === 'restaurants' ? 20 : 6).map((rk) => (
+                {rankings.slice(0, filter === 'restaurants' ? 20 : 6).map((rk) => rk.restaurant && (
                   <RestaurantCard key={rk.id} restaurant={rk.restaurant} ranking={rk} />
                 ))}
               </div>

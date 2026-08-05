@@ -1,17 +1,35 @@
 import { useEffect, useState } from 'react';
 import { TrendingUp, ArrowRight } from 'lucide-react';
 import { getRankings } from '@/lib/api';
+import { supabase } from '@/lib/supabase';
 import type { RankingScore } from '@/lib/types';
 import { RankingRow } from '@/components/RankingRow';
 
 export function DineBox50Page() {
   const [rankings, setRankings] = useState<RankingScore[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    getRankings(50)
-      .then(setRankings)
-      .finally(() => setLoading(false));
+    const loadRankings = () => {
+      getRankings(50)
+        .then((data) => {
+          setRankings(data);
+          setError(false);
+        })
+        .catch(() => setError(true))
+        .finally(() => setLoading(false));
+    };
+
+    loadRankings();
+    const channel = supabase
+      .channel('dinebox-50-rankings')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ranking_scores' }, loadRankings)
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (
@@ -36,9 +54,19 @@ export function DineBox50Page() {
               <div key={i} className="h-20 rounded-2xl bg-cream animate-pulse" />
             ))}
           </div>
+        ) : error ? (
+          <div className="max-w-3xl mx-auto rounded-2xl bg-cream p-8 text-center">
+            <p className="font-medium text-charcoal">We couldn’t load the DineBox 50 right now.</p>
+            <p className="mt-1 text-sm text-muted-text">Please refresh the page and try again.</p>
+          </div>
+        ) : rankings.length === 0 ? (
+          <div className="max-w-3xl mx-auto rounded-2xl bg-cream p-8 text-center">
+            <p className="font-medium text-charcoal">No restaurants have been ranked yet.</p>
+            <p className="mt-1 text-sm text-muted-text">Check back once DineBox scores have been calculated.</p>
+          </div>
         ) : (
           <div className="max-w-3xl mx-auto space-y-2">
-            {rankings.map((rk) => (
+            {rankings.map((rk) => rk.restaurant && (
               <RankingRow key={rk.id} rank={rk.rank} restaurant={rk.restaurant} ranking={rk} />
             ))}
           </div>

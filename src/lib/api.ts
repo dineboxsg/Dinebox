@@ -61,7 +61,7 @@ export async function searchRestaurants(query: string): Promise<Restaurant[]> {
 export async function getLatestPosts(limit = 10): Promise<Post[]> {
   const { data, error } = await supabase
     .from('posts')
-    .select('*, restaurant!inner(*)')
+    .select('*, restaurant:restaurants!inner(*)')
     .eq('status', 'published')
     .eq('restaurant.status', 'approved')
     .order('published_at', { ascending: false })
@@ -87,7 +87,7 @@ export async function getActiveDeals(limit = 12): Promise<Deal[]> {
   const today = new Date().toISOString().split('T')[0];
   const { data, error } = await supabase
     .from('deals')
-    .select('*, restaurant!inner(*)')
+    .select('*, restaurant:restaurants!inner(*)')
     .eq('status', 'live')
     .eq('restaurant.status', 'approved')
     .or(`end_date.is.null,end_date.gte.${today}`)
@@ -163,7 +163,7 @@ export async function getRestaurantAwards(restaurantId: string): Promise<Award[]
 export async function getRankings(limit = 50): Promise<RankingScore[]> {
   const { data, error } = await supabase
     .from('ranking_scores')
-    .select('*, restaurant!inner(*)')
+    .select('*, restaurant:restaurants!inner(*)')
     .eq('restaurant.status', 'approved')
     .order('rank', { ascending: true })
     .limit(limit);
@@ -181,6 +181,37 @@ export async function getRestaurantRanking(restaurantId: string): Promise<Rankin
     .maybeSingle();
   if (error) throw error;
   return data;
+}
+
+export interface RecommendationStatus {
+  count: number;
+  recommended: boolean;
+}
+
+export async function getRecommendationStatus(restaurantId: string, sessionId: string): Promise<RecommendationStatus> {
+  const { data, error } = await supabase.rpc('get_recommendation_status', {
+    p_restaurant_id: restaurantId,
+    p_session_id: sessionId,
+  });
+  if (error) throw error;
+  return {
+    count: Number(data?.count ?? 0),
+    recommended: Boolean(data?.recommended),
+  };
+}
+
+export async function recommendRestaurant(restaurantId: string, sessionId: string): Promise<{ count: number; ranking: RankingScore | null }> {
+  const { data, error } = await supabase.rpc('recommend_restaurant', {
+    p_restaurant_id: restaurantId,
+    p_session_id: sessionId,
+  });
+  if (error) throw error;
+
+  const result = Array.isArray(data) ? data[0] : data;
+  return {
+    count: Number(result?.recommendation_count ?? 0),
+    ranking: result?.ranking ?? null,
+  };
 }
 
 // ============ FOLLOWERS ============
