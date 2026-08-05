@@ -35,8 +35,15 @@ export function ImageUpload({ value, onChange, restaurantId, folder, label, opti
 
     setUploading(true);
     setError('');
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      setError('Your session has expired. Please sign in again before uploading an image.');
+      setUploading(false);
+      return;
+    }
+
     const extension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const path = `${restaurantId}/${folder}/${crypto.randomUUID()}.${extension}`;
+    const path = `${user.id}/${restaurantId}/${folder}/${crypto.randomUUID()}.${extension}`;
     const { error: uploadError } = await supabase.storage
       .from(MEDIA_BUCKET)
       .upload(path, file, { contentType: file.type, upsert: false });
