@@ -14,6 +14,7 @@ export function AdminSitePages() {
   const [savingHero, setSavingHero] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [heroError, setHeroError] = useState('');
+  const [pageError, setPageError] = useState('');
 
   useEffect(() => {
     supabase.from('site_pages').select('*').then(({ data }) => {
@@ -33,6 +34,7 @@ export function AdminSitePages() {
 
   const save = async (slug: SitePageSlug) => {
     setSaving(slug);
+    setPageError('');
     const { error } = await supabase.from('site_pages').upsert({
       slug,
       title: pages[slug].title.trim(),
@@ -40,8 +42,11 @@ export function AdminSitePages() {
       updated_at: new Date().toISOString(),
     });
     setSaving(null);
-    if (!error) {
+    if (error) {
+      setPageError(error.message);
+    } else {
       setSaved(slug);
+      setPages((current) => ({ ...current, [slug]: { ...current[slug], updated_at: new Date().toISOString() } }));
       window.setTimeout(() => setSaved(null), 2000);
     }
   };
@@ -118,6 +123,7 @@ export function AdminSitePages() {
             <button onClick={() => save(slug)} disabled={saving === slug} className="btn-primary mt-5 disabled:opacity-60">
               <Save className="w-4 h-4" /> {saving === slug ? 'Saving...' : saved === slug ? 'Saved' : 'Save page'}
             </button>
+            {pageError && <p className="mt-3 text-xs text-red-500">{pageError}</p>}
           </section>
         ))}
       </div>

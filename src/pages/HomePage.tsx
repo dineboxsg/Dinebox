@@ -55,10 +55,15 @@ export function HomePage() {
   }, []);
 
   useEffect(() => {
-    supabase.from('site_settings').select('value').eq('key', 'homepage_hero_image_url').maybeSingle()
-      .then(({ data }) => {
-        if (data?.value) setHeroBackgroundUrl(data.value);
-      });
+    const loadHeroBackground = () => {
+      supabase.from('site_settings').select('value').eq('key', 'homepage_hero_image_url').maybeSingle()
+        .then(({ data }) => {
+          if (data?.value) setHeroBackgroundUrl(data.value);
+        });
+    };
+    loadHeroBackground();
+    const refreshTimer = window.setInterval(loadHeroBackground, 30_000);
+    return () => window.clearInterval(refreshTimer);
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -82,7 +87,7 @@ export function HomePage() {
       {/* HERO */}
       <section className="relative pt-20 pb-16 sm:pt-28 sm:pb-24 overflow-hidden">
         <img src={heroBackgroundUrl} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-b from-warm-white/75 via-warm-white/80 to-warm-white/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-warm-white/25 via-warm-white/40 to-warm-white/65" />
         <div className="absolute top-20 right-0 w-96 h-96 bg-orange/5 rounded-full blur-3xl" />
         <div className="absolute top-40 left-0 w-96 h-96 bg-orange/5 rounded-full blur-3xl" />
 
