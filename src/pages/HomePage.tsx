@@ -7,6 +7,9 @@ import { RestaurantCard } from '@/components/RestaurantCard';
 import { PostCard } from '@/components/PostCard';
 import { DealCard } from '@/components/DealCard';
 import { RankingRow, MovementBadge } from '@/components/RankingRow';
+import { supabase } from '@/lib/supabase';
+
+const DEFAULT_HERO_BACKGROUND = '/dinebox-scan-background.jpeg';
 
 export function HomePage() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -17,6 +20,7 @@ export function HomePage() {
   const [rankings, setRankings] = useState<RankingScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [heroBackgroundUrl, setHeroBackgroundUrl] = useState(DEFAULT_HERO_BACKGROUND);
 
   useEffect(() => {
     let active = true;
@@ -50,6 +54,13 @@ export function HomePage() {
     };
   }, []);
 
+  useEffect(() => {
+    supabase.from('site_settings').select('value').eq('key', 'homepage_hero_image_url').maybeSingle()
+      .then(({ data }) => {
+        if (data?.value) setHeroBackgroundUrl(data.value);
+      });
+  }, []);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -70,7 +81,8 @@ export function HomePage() {
     <div className="animate-fade-in">
       {/* HERO */}
       <section className="relative pt-20 pb-16 sm:pt-28 sm:pb-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-cream/40 to-warm-white" />
+        <img src={heroBackgroundUrl} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-center" />
+        <div className="absolute inset-0 bg-gradient-to-b from-warm-white/75 via-warm-white/80 to-warm-white/90" />
         <div className="absolute top-20 right-0 w-96 h-96 bg-orange/5 rounded-full blur-3xl" />
         <div className="absolute top-40 left-0 w-96 h-96 bg-orange/5 rounded-full blur-3xl" />
 

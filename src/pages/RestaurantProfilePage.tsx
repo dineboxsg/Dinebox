@@ -3,6 +3,7 @@ import { MapPin, Star, BadgeCheck, Clock, Phone, Globe, Instagram, Facebook, Sha
 import { getRestaurantBySlug, getRestaurantPosts, getRestaurantDeals, getMenuCategories, getMenuItems, getRestaurantReviews, getRestaurantAwards, getRestaurantRanking, getRecommendationStatus, recommendRestaurant } from '@/lib/api';
 import { getSessionId, trackEvent } from '@/lib/analytics';
 import { navigate } from '@/lib/router';
+import { DEFAULT_RESTAURANT_LOGO } from '@/lib/restaurant-logo';
 import type { Restaurant, Post, Deal, MenuCategory, MenuItem, Review, Award, RankingScore } from '@/lib/types';
 import { PostCard } from '@/components/PostCard';
 import { DealCard } from '@/components/DealCard';
@@ -138,13 +139,7 @@ export function RestaurantProfilePage({ slug }: { slug: string; dealId?: string 
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end">
           {/* Logo */}
           <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden bg-white shadow-xl ring-4 ring-warm-white flex-shrink-0">
-            {restaurant.logo_url ? (
-              <img src={restaurant.logo_url} alt={restaurant.name} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full bg-charcoal flex items-center justify-center">
-                <span className="text-white font-serif text-4xl">{restaurant.name[0]}</span>
-              </div>
-            )}
+            <img src={restaurant.logo_url || DEFAULT_RESTAURANT_LOGO} alt={restaurant.name} className="w-full h-full object-contain bg-white p-3" />
           </div>
 
           {/* Info */}

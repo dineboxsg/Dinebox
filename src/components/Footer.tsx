@@ -15,9 +15,9 @@ const businessLinks = [
 ];
 
 const legalLinks = [
-  { label: 'Privacy Policy', path: '/' },
-  { label: 'Terms of Service', path: '/' },
-  { label: 'Contact Us', path: '/' },
+  { label: 'Privacy Policy', path: '/privacy' },
+  { label: 'Terms of Service', path: '/terms' },
+  { label: 'Contact Us', path: '/contact' },
 ];
 
 export function Footer() {

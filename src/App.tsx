@@ -12,6 +12,7 @@ import { ForBusinessesPage } from '@/pages/ForBusinessesPage';
 import { MerchantLoginPage, MerchantSignupPage } from '@/pages/MerchantAuth';
 import { MerchantDashboard } from '@/pages/MerchantDashboard';
 import { AdminDashboard, AdminLoginPage } from '@/pages/AdminDashboard';
+import { SitePage } from '@/pages/SitePage';
 
 function AppContent() {
   const { route } = useRouter();
@@ -42,6 +43,12 @@ function AppContent() {
     page = <SearchPage query={route.query.get('q') || ''} />;
   } else if (path === '/for-businesses') {
     page = <ForBusinessesPage />;
+  } else if (path === '/privacy') {
+    page = <SitePage slug="privacy" />;
+  } else if (path === '/terms') {
+    page = <SitePage slug="terms" />;
+  } else if (path === '/contact') {
+    page = <SitePage slug="contact" />;
   } else {
     const restMatch = matchRoute('/d/:slug', path);
     if (restMatch) {

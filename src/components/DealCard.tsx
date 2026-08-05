@@ -1,6 +1,7 @@
 import { Clock, ArrowRight, MapPin } from 'lucide-react';
 import type { Deal, Restaurant } from '@/lib/types';
 import { navigate } from '@/lib/router';
+import { DEFAULT_RESTAURANT_LOGO } from '@/lib/restaurant-logo';
 
 interface DealCardProps {
   deal: Deal;
@@ -69,13 +70,7 @@ export function DealCard({ deal, restaurant }: DealCardProps) {
         {rest && (
           <button onClick={() => navigate(`/d/${rest.slug}`)} className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-full overflow-hidden bg-cream flex-shrink-0">
-              {rest.logo_url ? (
-                <img src={rest.logo_url} alt={rest.name} loading="lazy" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full bg-charcoal flex items-center justify-center">
-                  <span className="text-white text-xs font-serif">{rest.name[0]}</span>
-                </div>
-              )}
+              <img src={rest.logo_url || DEFAULT_RESTAURANT_LOGO} alt={rest.name} loading="lazy" className="w-full h-full object-contain bg-white p-1" />
             </div>
             <span className="text-xs text-muted-text">{rest.name} · {rest.location}</span>
           </button>

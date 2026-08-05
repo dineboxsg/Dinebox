@@ -1,6 +1,7 @@
 import { ArrowUp, ArrowDown, Sparkles, Minus } from 'lucide-react';
 import type { Restaurant, RankingScore } from '@/lib/types';
 import { navigate } from '@/lib/router';
+import { DEFAULT_RESTAURANT_LOGO } from '@/lib/restaurant-logo';
 
 interface RankingRowProps {
   rank: number;
@@ -69,9 +70,7 @@ export function RankingRow({ rank, restaurant, ranking, variant = 'full' }: Rank
         {restaurant.cover_image_url ? (
           <img src={restaurant.cover_image_url} alt={restaurant.name} loading="lazy" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="font-serif text-lg text-charcoal/20">{restaurant.name[0]}</span>
-          </div>
+          <img src={restaurant.logo_url || DEFAULT_RESTAURANT_LOGO} alt={restaurant.name} loading="lazy" className="w-full h-full object-contain bg-white p-1" />
         )}
       </div>
 

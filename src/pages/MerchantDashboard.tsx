@@ -4,6 +4,7 @@ import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { navigate } from '@/lib/router';
+import { DEFAULT_RESTAURANT_LOGO } from '@/lib/restaurant-logo';
 import type { Restaurant } from '@/lib/types';
 import { MerchantOverview } from '@/components/merchant/MerchantOverview';
 import { MerchantMyDineBox } from '@/components/merchant/MerchantMyDineBox';
@@ -80,11 +81,7 @@ export function MerchantDashboard() {
           <div className="p-6">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-9 h-9 rounded-xl overflow-hidden bg-charcoal flex items-center justify-center flex-shrink-0">
-                {restaurant.logo_url ? (
-                  <img src={restaurant.logo_url} alt={`${restaurant.name} logo`} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-orange font-serif font-bold text-sm">{restaurant.name.charAt(0)}</span>
-                )}
+                <img src={restaurant.logo_url || DEFAULT_RESTAURANT_LOGO} alt={`${restaurant.name} logo`} className="w-full h-full object-contain bg-white p-1" />
               </div>
               <span className="font-serif font-bold text-charcoal truncate">{restaurant.name}</span>
             </div>

@@ -91,12 +91,12 @@ BEGIN
   UPDATE ranking_scores
   SET
     score = ranked.score,
-    rank = ranked.new_rank,
+    rank = ranked.new_rank::int,
     previous_rank = ranked.previous_rank,
     movement = CASE
       WHEN ranked.previous_rank IS NULL THEN 'NEW'
-      WHEN ranked.previous_rank > ranked.new_rank THEN '↑ ' || (ranked.previous_rank - ranked.new_rank)
-      WHEN ranked.previous_rank < ranked.new_rank THEN '↓ ' || (ranked.new_rank - ranked.previous_rank)
+      WHEN ranked.previous_rank > ranked.new_rank::int THEN '↑ ' || (ranked.previous_rank - ranked.new_rank::int)
+      WHEN ranked.previous_rank < ranked.new_rank::int THEN '↓ ' || (ranked.new_rank::int - ranked.previous_rank)
       ELSE '—'
     END,
     period = 'live',
@@ -157,24 +157,5 @@ $$;
 REVOKE ALL ON FUNCTION refresh_dinebox_rankings() FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION get_recommendation_status(uuid, text) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION recommend_restaurant(uuid, text) TO anon, authenticated;
-
--- Publish ranking updates so connected DineBox 50 pages refresh automatically.
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime')
-    AND NOT EXISTS (
-      SELECT 1
-      FROM pg_publication_rel publication_relation
-      JOIN pg_publication publication ON publication.oid = publication_relation.prpubid
-      JOIN pg_class relation ON relation.oid = publication_relation.prrelid
-      JOIN pg_namespace schema ON schema.oid = relation.relnamespace
-      WHERE publication.pubname = 'supabase_realtime'
-        AND schema.nspname = 'public'
-        AND relation.relname = 'ranking_scores'
-    ) THEN
-    ALTER PUBLICATION supabase_realtime ADD TABLE public.ranking_scores;
-  END IF;
-END;
-$$;
 
 SELECT refresh_dinebox_rankings();

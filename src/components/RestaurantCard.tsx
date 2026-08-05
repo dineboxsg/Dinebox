@@ -1,6 +1,7 @@
 import { TrendingUp, MapPin, Star, BadgeCheck } from 'lucide-react';
 import type { Restaurant, RankingScore } from '@/lib/types';
 import { navigate } from '@/lib/router';
+import { DEFAULT_RESTAURANT_LOGO } from '@/lib/restaurant-logo';
 
 interface RestaurantCardProps {
   restaurant: Restaurant;
@@ -26,9 +27,7 @@ export function RestaurantCard({ restaurant, ranking, variant = 'default' }: Res
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-cream to-beige flex items-center justify-center">
-              <span className="font-serif text-3xl text-charcoal/20">{restaurant.name[0]}</span>
-            </div>
+            <img src={restaurant.logo_url || DEFAULT_RESTAURANT_LOGO} alt={restaurant.name} loading="lazy" className="w-full h-full object-contain bg-white p-5" />
           )}
           {restaurant.verified && (
             <div className="absolute top-3 left-3 badge bg-white/90 backdrop-blur text-charcoal">
@@ -77,9 +76,7 @@ export function RestaurantCard({ restaurant, ranking, variant = 'default' }: Res
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-cream to-beige flex items-center justify-center">
-            <span className="font-serif text-5xl text-charcoal/20">{restaurant.name[0]}</span>
-          </div>
+          <img src={restaurant.logo_url || DEFAULT_RESTAURANT_LOGO} alt={restaurant.name} loading="lazy" className="w-full h-full object-contain bg-white p-8" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-transparent to-transparent" />
         {restaurant.verified && (
@@ -128,9 +125,7 @@ export function RestaurantCardSmall({ restaurant, ranking }: { restaurant: Resta
         {restaurant.cover_image_url ? (
           <img src={restaurant.cover_image_url} alt={restaurant.name} loading="lazy" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full bg-cream flex items-center justify-center">
-            <span className="font-serif text-lg text-charcoal/30">{restaurant.name[0]}</span>
-          </div>
+          <img src={restaurant.logo_url || DEFAULT_RESTAURANT_LOGO} alt={restaurant.name} loading="lazy" className="w-full h-full object-contain bg-white p-2" />
         )}
       </div>
       <div className="flex-1 min-w-0">

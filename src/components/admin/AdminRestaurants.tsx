@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Search, BadgeCheck, Star, Ban, Check, X, ExternalLink } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { DEFAULT_RESTAURANT_LOGO } from '@/lib/restaurant-logo';
 import { navigate } from '@/lib/router';
 import type { Restaurant } from '@/lib/types';
 
@@ -68,7 +69,7 @@ export function AdminRestaurants() {
             <div key={r.id} className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-2xl bg-white border border-beige/40">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="w-12 h-12 rounded-xl overflow-hidden bg-cream flex-shrink-0">
-                  {r.logo_url && <img src={r.logo_url} alt={r.name} className="w-full h-full object-cover" />}
+                  <img src={r.logo_url || DEFAULT_RESTAURANT_LOGO} alt={r.name} className="w-full h-full object-contain bg-white p-1" />
                 </div>
                 <div className="min-w-0">
                   <h4 className="font-semibold text-charcoal truncate">{r.name}</h4>

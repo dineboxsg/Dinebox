@@ -13,8 +13,9 @@ import { AdminReviews } from '@/components/admin/AdminReviews';
 import { AdminAnalytics } from '@/components/admin/AdminAnalytics';
 import { AdminUsers } from '@/components/admin/AdminUsers';
 import { AdminSettings } from '@/components/admin/AdminSettings';
+import { AdminSitePages } from '@/components/admin/AdminSitePages';
 
-type Section = 'overview' | 'restaurants' | 'posts' | 'deals' | 'awards' | 'reviews' | 'analytics' | 'users' | 'settings';
+type Section = 'overview' | 'restaurants' | 'posts' | 'deals' | 'awards' | 'reviews' | 'analytics' | 'users' | 'settings' | 'pages';
 
 export function AdminDashboard() {
   const { profile, session, loading, signOut } = useAuth();
@@ -65,6 +66,7 @@ export function AdminDashboard() {
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'users', label: 'Users & access', icon: Users },
     { id: 'settings', label: 'Platform settings', icon: SlidersHorizontal },
+    { id: 'pages', label: 'Site pages', icon: FileText },
   ];
 
   return (
@@ -118,6 +120,7 @@ export function AdminDashboard() {
             {section === 'analytics' && <AdminAnalytics />}
             {section === 'users' && <AdminUsers />}
             {section === 'settings' && <AdminSettings />}
+            {section === 'pages' && <AdminSitePages />}
           </div>
         </main>
       </div>

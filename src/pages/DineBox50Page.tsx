@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { TrendingUp, ArrowRight } from 'lucide-react';
 import { getRankings } from '@/lib/api';
-import { supabase } from '@/lib/supabase';
 import type { RankingScore } from '@/lib/types';
 import { RankingRow } from '@/components/RankingRow';
 
@@ -22,13 +21,10 @@ export function DineBox50Page() {
     };
 
     loadRankings();
-    const channel = supabase
-      .channel('dinebox-50-rankings')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'ranking_scores' }, loadRankings)
-      .subscribe();
+    const refreshTimer = window.setInterval(loadRankings, 15_000);
 
     return () => {
-      supabase.removeChannel(channel);
+      window.clearInterval(refreshTimer);
     };
   }, []);
 

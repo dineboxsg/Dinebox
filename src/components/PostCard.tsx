@@ -1,6 +1,7 @@
 import { ArrowRight, Clock } from 'lucide-react';
 import type { Post, Restaurant } from '@/lib/types';
 import { navigate } from '@/lib/router';
+import { DEFAULT_RESTAURANT_LOGO } from '@/lib/restaurant-logo';
 
 const postTypeLabels: Record<string, string> = {
   update: 'Update',
@@ -59,13 +60,7 @@ export function PostCard({ post, restaurant, variant = 'large' }: PostCardProps)
       <div className="flex items-center gap-3 mb-3">
         <button onClick={() => navigate(`/d/${rest.slug}`)} className="flex items-center gap-3 group/rest">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-cream flex-shrink-0 ring-2 ring-cream">
-            {rest.logo_url ? (
-              <img src={rest.logo_url} alt={rest.name} loading="lazy" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full bg-charcoal flex items-center justify-center">
-                <span className="text-white font-serif text-sm">{rest.name[0]}</span>
-              </div>
-            )}
+            <img src={rest.logo_url || DEFAULT_RESTAURANT_LOGO} alt={rest.name} loading="lazy" className="w-full h-full object-contain bg-white p-1" />
           </div>
           <div className="text-left">
             <h4 className="font-semibold text-charcoal text-sm group-hover/rest:text-orange transition-colors">{rest.name}</h4>
