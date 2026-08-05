@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { LayoutDashboard, Store, FileText, Tag, UtensilsCrossed, Award, BarChart3, LogOut, Menu, X, ExternalLink } from 'lucide-react';
+import { LayoutDashboard, Store, FileText, Tag, UtensilsCrossed, Award, BarChart3, LogOut, Menu, ExternalLink } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { navigate } from '@/lib/router';
@@ -15,7 +16,7 @@ import { MerchantAnalytics } from '@/components/merchant/MerchantAnalytics';
 type Section = 'overview' | 'my-dinebox' | 'posts' | 'deals' | 'menu' | 'recognition' | 'analytics';
 
 export function MerchantDashboard() {
-  const { profile, session, loading, signOut } = useAuth();
+  const { session, loading, signOut } = useAuth();
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [section, setSection] = useState<Section>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -52,7 +53,7 @@ export function MerchantDashboard() {
     );
   }
 
-  const navItems: { id: Section; label: string; icon: any }[] = [
+  const navItems: { id: Section; label: string; icon: LucideIcon }[] = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'my-dinebox', label: 'My DineBox', icon: Store },
     { id: 'posts', label: 'Posts', icon: FileText },
@@ -78,10 +79,14 @@ export function MerchantDashboard() {
         }`}>
           <div className="p-6">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 rounded-lg bg-charcoal flex items-center justify-center">
-                <span className="text-orange font-serif font-bold text-sm">D</span>
+              <div className="w-9 h-9 rounded-xl overflow-hidden bg-charcoal flex items-center justify-center flex-shrink-0">
+                {restaurant.logo_url ? (
+                  <img src={restaurant.logo_url} alt={`${restaurant.name} logo`} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-orange font-serif font-bold text-sm">{restaurant.name.charAt(0)}</span>
+                )}
               </div>
-              <span className="font-serif font-bold text-charcoal">Merchant</span>
+              <span className="font-serif font-bold text-charcoal truncate">{restaurant.name}</span>
             </div>
 
             <nav className="space-y-1">
