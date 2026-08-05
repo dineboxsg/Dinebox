@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { LayoutDashboard, Store, FileText, Tag, Award, Star, BarChart3, LogOut, Menu, Shield } from 'lucide-react';
+import { LayoutDashboard, Store, FileText, Tag, Award, Star, BarChart3, LogOut, Menu, Shield, Users, SlidersHorizontal, AlertTriangle, RefreshCw } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { navigate } from '@/lib/router';
-import type { Restaurant } from '@/lib/types';
 import { AdminOverview } from '@/components/admin/AdminOverview';
 import { AdminRestaurants } from '@/components/admin/AdminRestaurants';
 import { AdminPosts } from '@/components/admin/AdminPosts';
@@ -11,8 +11,10 @@ import { AdminDeals } from '@/components/admin/AdminDeals';
 import { AdminAwards } from '@/components/admin/AdminAwards';
 import { AdminReviews } from '@/components/admin/AdminReviews';
 import { AdminAnalytics } from '@/components/admin/AdminAnalytics';
+import { AdminUsers } from '@/components/admin/AdminUsers';
+import { AdminSettings } from '@/components/admin/AdminSettings';
 
-type Section = 'overview' | 'restaurants' | 'posts' | 'deals' | 'awards' | 'reviews' | 'analytics';
+type Section = 'overview' | 'restaurants' | 'posts' | 'deals' | 'awards' | 'reviews' | 'analytics' | 'users' | 'settings';
 
 export function AdminDashboard() {
   const { profile, session, loading, signOut } = useAuth();
@@ -23,18 +25,37 @@ export function AdminDashboard() {
     if (!loading && !session) {
       navigate('/admin/login');
     }
-    if (!loading && session && profile && profile.role !== 'admin') {
-      navigate('/');
-    }
   }, [loading, session, profile]);
 
   if (loading || !session) {
     return <div className="pt-20 min-h-screen flex items-center justify-center"><p className="text-muted-text">Loading...</p></div>;
   }
 
-  if (profile?.role !== 'admin') return null;
+  if (!profile || profile.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-cream/30 pt-24 px-4 flex items-center justify-center">
+        <div className="w-full max-w-lg rounded-3xl bg-white border border-beige/40 shadow-xl p-7 sm:p-9 text-center animate-fade-in">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-orange/10 text-orange flex items-center justify-center mb-5">
+            <AlertTriangle className="w-6 h-6" />
+          </div>
+          <h1 className="font-serif text-2xl font-bold text-charcoal">Admin access is not enabled</h1>
+          <p className="text-sm text-muted-text leading-relaxed mt-3">
+            You are signed in as <span className="font-medium text-charcoal">{session.user.email}</span>, but this account {profile ? 'does not have the admin role' : 'does not yet have a DineBox user profile'}.
+          </p>
+          <div className="mt-6 rounded-2xl bg-cream/60 p-4 text-left">
+            <p className="text-sm font-medium text-charcoal">To enable the dashboard</p>
+            <p className="text-xs text-muted-text leading-relaxed mt-1.5">Apply the latest Supabase migrations, then refresh this page. The bootstrap migration promotes dineboxsg@gmail.com to administrator.</p>
+          </div>
+          <div className="flex flex-col sm:flex-row justify-center gap-3 mt-6">
+            <button onClick={() => window.location.reload()} className="btn-primary"><RefreshCw className="w-4 h-4" /> Refresh access</button>
+            <button onClick={async () => { await signOut(); navigate('/'); }} className="btn-outline"><LogOut className="w-4 h-4" /> Sign out</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const navItems: { id: Section; label: string; icon: any }[] = [
+  const navItems: { id: Section; label: string; icon: LucideIcon }[] = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'restaurants', label: 'Restaurants', icon: Store },
     { id: 'posts', label: 'Posts', icon: FileText },
@@ -42,6 +63,8 @@ export function AdminDashboard() {
     { id: 'awards', label: 'Awards', icon: Award },
     { id: 'reviews', label: 'Reviews', icon: Star },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'users', label: 'Users & access', icon: Users },
+    { id: 'settings', label: 'Platform settings', icon: SlidersHorizontal },
   ];
 
   return (
@@ -93,6 +116,8 @@ export function AdminDashboard() {
             {section === 'awards' && <AdminAwards />}
             {section === 'reviews' && <AdminReviews />}
             {section === 'analytics' && <AdminAnalytics />}
+            {section === 'users' && <AdminUsers />}
+            {section === 'settings' && <AdminSettings />}
           </div>
         </main>
       </div>

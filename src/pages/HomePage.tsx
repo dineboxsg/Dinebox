@@ -19,23 +19,35 @@ export function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    Promise.all([
-      getApprovedRestaurants(),
-      getLatestPosts(8),
-      getActiveDeals(6),
-      getFeaturedRestaurants(),
-      getNewRestaurants(6),
-      getRankings(10),
-    ])
-      .then(([r, p, d, f, n, rk]) => {
-        setRestaurants(r);
-        setPosts(p);
-        setDeals(d);
-        setFeatured(f);
-        setNewRestaurants(n);
-        setRankings(rk);
-      })
-      .finally(() => setLoading(false));
+    let active = true;
+
+    async function loadHomePage() {
+      const [restaurantsResult, postsResult, dealsResult, featuredResult, newRestaurantsResult, rankingsResult] =
+        await Promise.allSettled([
+          getApprovedRestaurants(),
+          getLatestPosts(8),
+          getActiveDeals(6),
+          getFeaturedRestaurants(),
+          getNewRestaurants(6),
+          getRankings(10),
+        ]);
+
+      if (!active) return;
+
+      if (restaurantsResult.status === 'fulfilled') setRestaurants(restaurantsResult.value);
+      if (postsResult.status === 'fulfilled') setPosts(postsResult.value);
+      if (dealsResult.status === 'fulfilled') setDeals(dealsResult.value);
+      if (featuredResult.status === 'fulfilled') setFeatured(featuredResult.value);
+      if (newRestaurantsResult.status === 'fulfilled') setNewRestaurants(newRestaurantsResult.value);
+      if (rankingsResult.status === 'fulfilled') setRankings(rankingsResult.value);
+      setLoading(false);
+    }
+
+    void loadHomePage();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -45,7 +57,14 @@ export function HomePage() {
     }
   };
 
-  const trendingRestaurants = rankings.slice(0, 6).map(rk => rk.restaurant).filter(Boolean);
+  const rankedRestaurants = rankings
+    .map((ranking) => ranking.restaurant)
+    .filter((restaurant): restaurant is Restaurant => Boolean(restaurant));
+  const rankedRestaurantIds = new Set(rankedRestaurants.map((restaurant) => restaurant.id));
+  const trendingRestaurants = [
+    ...rankedRestaurants,
+    ...restaurants.filter((restaurant) => !rankedRestaurantIds.has(restaurant.id)),
+  ].slice(0, 6);
 
   return (
     <div className="animate-fade-in">
@@ -94,8 +113,9 @@ export function HomePage() {
         </div>
       </section>
 
+      <div className="flex flex-col">
       {/* TRENDING RIGHT NOW */}
-      <section className="py-12 sm:py-16">
+      <section className="order-2 py-12 sm:py-16">
         <div className="container-page">
           <div className="flex items-end justify-between mb-8">
             <div>
@@ -123,13 +143,16 @@ export function HomePage() {
                 const ranking = rankings.find(r => r.restaurant_id === rest.id);
                 return <RestaurantCard key={rest.id} restaurant={rest} ranking={ranking} variant="horizontal" />;
               })}
+              {trendingRestaurants.length === 0 && (
+                <p className="text-muted-text">No restaurants are available yet. Please check back soon.</p>
+              )}
             </div>
           )}
         </div>
       </section>
 
       {/* DINEBOX 50 */}
-      <section className="py-12 sm:py-16 bg-cream/40">
+      <section className="order-5 py-12 sm:py-16 bg-cream/40">
         <div className="container-page">
           <div className="flex items-end justify-between mb-8">
             <div>
@@ -167,7 +190,7 @@ export function HomePage() {
       </section>
 
       {/* LATEST FEED */}
-      <section className="py-12 sm:py-16">
+      <section className="order-6 py-12 sm:py-16">
         <div className="container-page">
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-2">
@@ -195,7 +218,7 @@ export function HomePage() {
       </section>
 
       {/* DEALS */}
-      <section className="py-12 sm:py-16 bg-cream/40">
+      <section className="order-4 py-12 sm:py-16 bg-cream/40">
         <div className="container-page">
           <div className="flex items-end justify-between mb-8">
             <div>
@@ -227,7 +250,7 @@ export function HomePage() {
       </section>
 
       {/* NEW & RISING */}
-      <section className="py-12 sm:py-16">
+      <section className="order-3 py-12 sm:py-16">
         <div className="container-page">
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-2">
@@ -256,7 +279,7 @@ export function HomePage() {
 
       {/* FEATURED */}
       {featured.length > 0 && (
-        <section className="py-12 sm:py-16 bg-cream/40">
+        <section className="order-1 py-12 sm:py-16 bg-cream/40">
           <div className="container-page">
             <div className="mb-8">
               <div className="flex items-center gap-2 mb-2">
@@ -275,6 +298,7 @@ export function HomePage() {
           </div>
         </section>
       )}
+      </div>
     </div>
   );
 }

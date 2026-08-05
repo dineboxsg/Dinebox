@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Edit3, Trash2, X, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Restaurant, MenuCategory, MenuItem } from '@/lib/types';
+import { ImageUpload } from '@/components/ImageUpload';
 
 export function MerchantMenu({ restaurant }: { restaurant: Restaurant }) {
   const [categories, setCategories] = useState<MenuCategory[]>([]);
@@ -127,15 +128,12 @@ export function MerchantMenu({ restaurant }: { restaurant: Restaurant }) {
                 <label className="text-sm font-medium text-charcoal mb-1.5 block">Description</label>
                 <textarea value={itemForm.description} onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })} rows={2} className="input-field resize-none" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-charcoal mb-1.5 block">Price ($)</label>
                   <input type="number" step="0.5" value={itemForm.price} onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })} className="input-field" placeholder="22" />
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-charcoal mb-1.5 block">Image URL</label>
-                  <input type="url" value={itemForm.image_url} onChange={(e) => setItemForm({ ...itemForm, image_url: e.target.value })} className="input-field" placeholder="https://..." />
-                </div>
+                <ImageUpload label="Item image" value={itemForm.image_url} onChange={(image_url) => setItemForm({ ...itemForm, image_url })} restaurantId={restaurant.id} folder="menu-items" optional />
               </div>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={itemForm.popular} onChange={(e) => setItemForm({ ...itemForm, popular: e.target.checked })} className="w-4 h-4 rounded text-orange focus:ring-orange" />

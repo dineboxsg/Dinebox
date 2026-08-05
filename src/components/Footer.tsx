@@ -30,38 +30,18 @@ export function Footer() {
       </div>
 
       <div className="relative container-page py-16">
-        {/* Top section: brand + newsletter in one block */}
+        {/* Top section: brand statement + newsletter */}
         <div className="pb-14 border-b border-warm-white/10">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-3 mb-5">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,28rem)] lg:gap-16 lg:items-start">
+            <div className="max-w-xl text-center lg:text-left">
+              <div className="flex items-center justify-center lg:justify-start gap-3 mb-5">
               <img src="/DINEBOXLOGOTRANSPARENT.png" alt="DineBox" className="w-12 h-12 object-contain" />
               <span className="font-sans text-2xl font-bold tracking-tight">DineBox</span>
             </div>
-            <p className="text-warm-white/60 text-base leading-relaxed max-w-xl mx-auto">
+            <p className="text-warm-white/60 text-base leading-relaxed">
               Singapore's live F&B discovery platform. Find trending restaurants, exclusive deals, and the places everyone's talking about.
             </p>
-            <h3 className="text-lg font-semibold mt-8 mb-2">Stay in the loop</h3>
-            <p className="text-warm-white/50 text-sm mb-5 max-w-sm mx-auto">
-              Get the latest deals, trending spots, and DineBox 50 updates delivered to your inbox.
-            </p>
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-            >
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 px-4 py-3 rounded-xl bg-warm-white/5 border border-warm-white/15 text-warm-white placeholder:text-warm-white/30 text-sm focus:outline-none focus:border-orange focus:bg-warm-white/10 transition-all"
-              />
-              <button
-                type="submit"
-                className="px-6 py-3 rounded-xl bg-orange text-charcoal font-semibold text-sm hover:bg-orange-400 transition-all duration-300 hover:shadow-lg hover:shadow-orange/30 flex items-center justify-center gap-1.5 group"
-              >
-                Subscribe
-                <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </button>
-            </form>
-            <div className="flex items-center justify-center gap-3 mt-8">
+            <div className="flex items-center justify-center lg:justify-start gap-3 mt-8">
               <a
                 href="https://instagram.com"
                 target="_blank"
@@ -87,6 +67,31 @@ export function Footer() {
               >
                 <Mail size={18} />
               </a>
+            </div>
+            </div>
+
+            <div className="text-center lg:text-left">
+            <h3 className="text-lg font-semibold mb-2">Stay in the loop</h3>
+            <p className="text-warm-white/50 text-sm mb-5">
+              Get the latest deals, trending spots, and DineBox 50 updates delivered to your inbox.
+            </p>
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="flex flex-col sm:flex-row gap-3"
+            >
+              <input
+                type="email"
+                placeholder="your@email.com"
+                className="flex-1 px-4 py-3 rounded-xl bg-warm-white/5 border border-warm-white/15 text-warm-white placeholder:text-warm-white/30 text-sm focus:outline-none focus:border-orange focus:bg-warm-white/10 transition-all"
+              />
+              <button
+                type="submit"
+                className="px-6 py-3 rounded-xl bg-orange text-charcoal font-semibold text-sm hover:bg-orange-400 transition-all duration-300 hover:shadow-lg hover:shadow-orange/30 flex items-center justify-center gap-1.5 group"
+              >
+                Subscribe
+                <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </button>
+            </form>
             </div>
           </div>
         </div>

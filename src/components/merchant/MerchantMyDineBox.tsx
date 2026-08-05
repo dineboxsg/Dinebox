@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Save, QrCode, Download, Copy } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Restaurant } from '@/lib/types';
+import { ImageUpload } from '@/components/ImageUpload';
 
 export function MerchantMyDineBox({ restaurant, onUpdate }: { restaurant: Restaurant; onUpdate: (r: Restaurant) => void }) {
   const [form, setForm] = useState({
@@ -60,8 +61,6 @@ export function MerchantMyDineBox({ restaurant, onUpdate }: { restaurant: Restau
     { key: 'website', label: 'Website', type: 'url' },
     { key: 'instagram', label: 'Instagram', type: 'text' },
     { key: 'facebook', label: 'Facebook', type: 'text' },
-    { key: 'logo_url', label: 'Logo Image URL', type: 'url' },
-    { key: 'cover_image_url', label: 'Cover Image URL', type: 'url' },
   ] as const;
 
   return (
@@ -89,6 +88,24 @@ export function MerchantMyDineBox({ restaurant, onUpdate }: { restaurant: Restau
               />
             </div>
           ))}
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+          <ImageUpload
+            label="Logo image"
+            value={form.logo_url}
+            onChange={(logo_url) => setForm({ ...form, logo_url })}
+            restaurantId={restaurant.id}
+            folder="logos"
+            optional
+          />
+          <ImageUpload
+            label="Cover image"
+            value={form.cover_image_url}
+            onChange={(cover_image_url) => setForm({ ...form, cover_image_url })}
+            restaurantId={restaurant.id}
+            folder="covers"
+            optional
+          />
         </div>
         <div className="mt-4">
           <label className="text-sm font-medium text-charcoal mb-1.5 block">Description</label>

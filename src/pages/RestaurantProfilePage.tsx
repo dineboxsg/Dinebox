@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { MapPin, Star, BadgeCheck, Clock, Phone, Globe, Instagram, Facebook, Share2, ArrowLeft, Heart, ChevronRight } from 'lucide-react';
-import { getRestaurantBySlug, getRestaurantPosts, getRestaurantDeals, getMenuCategories, getMenuItems, getRestaurantReviews, getRestaurantAwards, getRestaurantRanking, getFollowerCount, isFollowing, toggleFollow } from '@/lib/api';
-import { trackEvent, useSessionId } from '@/lib/analytics';
+import { MapPin, Star, BadgeCheck, Clock, Phone, Globe, Instagram, Facebook, Share2, ArrowLeft, ThumbsUp } from 'lucide-react';
+import { getRestaurantBySlug, getRestaurantPosts, getRestaurantDeals, getMenuCategories, getMenuItems, getRestaurantReviews, getRestaurantAwards, getRestaurantRanking } from '@/lib/api';
+import { trackEvent } from '@/lib/analytics';
 import { navigate } from '@/lib/router';
 import type { Restaurant, Post, Deal, MenuCategory, MenuItem, Review, Award, RankingScore } from '@/lib/types';
 import { PostCard } from '@/components/PostCard';
@@ -11,7 +11,19 @@ const dayNames: Record<string, string> = {
   mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday', fri: 'Friday', sat: 'Saturday', sun: 'Sunday',
 };
 
-export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?: string }) {
+const RECOMMENDATIONS_STORAGE_KEY = 'dinebox_recommended_restaurants';
+
+function getRecommendedRestaurantIds(): string[] {
+  try {
+    const storedRecommendations = localStorage.getItem(RECOMMENDATIONS_STORAGE_KEY);
+    const recommendations = storedRecommendations ? JSON.parse(storedRecommendations) : [];
+    return Array.isArray(recommendations) ? recommendations : [];
+  } catch {
+    return [];
+  }
+}
+
+export function RestaurantProfilePage({ slug }: { slug: string; dealId?: string }) {
   const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
@@ -20,10 +32,8 @@ export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?:
   const [reviews, setReviews] = useState<Review[]>([]);
   const [awards, setAwards] = useState<Award[]>([]);
   const [ranking, setRanking] = useState<RankingScore | null>(null);
-  const [followerCount, setFollowerCount] = useState(0);
-  const [following, setFollowing] = useState(false);
+  const [recommended, setRecommended] = useState(false);
   const [loading, setLoading] = useState(true);
-  const sessionId = useSessionId();
 
   useEffect(() => {
     if (!slug) return;
@@ -34,7 +44,7 @@ export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?:
       setRestaurant(rest);
       if (rest) {
         trackEvent(rest.id, 'profile_view');
-        const [p, d, c, m, r, a, rk, fc, isf] = await Promise.all([
+        const [p, d, c, m, r, a, rk] = await Promise.all([
           getRestaurantPosts(rest.id),
           getRestaurantDeals(rest.id),
           getMenuCategories(rest.id),
@@ -42,8 +52,6 @@ export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?:
           getRestaurantReviews(rest.id),
           getRestaurantAwards(rest.id),
           getRestaurantRanking(rest.id),
-          getFollowerCount(rest.id),
-          isFollowing(rest.id, sessionId),
         ]);
         setPosts(p);
         setDeals(d);
@@ -52,19 +60,26 @@ export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?:
         setReviews(r);
         setAwards(a);
         setRanking(rk);
-        setFollowerCount(fc);
-        setFollowing(isf);
+        setRecommended(getRecommendedRestaurantIds().includes(rest.id));
       }
       setLoading(false);
     });
-  }, [slug, sessionId]);
+  }, [slug]);
 
-  const handleFollow = async () => {
+  const handleRecommend = () => {
     if (!restaurant) return;
-    const newState = await toggleFollow(restaurant.id, sessionId, following);
-    setFollowing(newState);
-    setFollowerCount(c => newState ? c + 1 : c - 1);
-    if (newState) trackEvent(restaurant.id, 'follow');
+    if (recommended) return;
+
+    const recommendations = getRecommendedRestaurantIds();
+    if (!recommendations.includes(restaurant.id)) {
+      try {
+        localStorage.setItem(RECOMMENDATIONS_STORAGE_KEY, JSON.stringify([...recommendations, restaurant.id]));
+      } catch {
+        // Local storage may be unavailable in private browsing modes.
+      }
+    }
+    setRecommended(true);
+    trackEvent(restaurant.id, 'recommend');
   };
 
   const handleDirections = () => {
@@ -114,14 +129,14 @@ export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?:
   return (
     <div className="animate-fade-in">
       {/* Cover Image */}
-      <div className="relative h-72 sm:h-96 bg-cream overflow-hidden">
+      <div className="relative h-64 sm:h-80 bg-cream overflow-hidden">
         {restaurant.cover_image_url && (
           <img src={restaurant.cover_image_url} alt={restaurant.name} className="w-full h-full object-cover" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 to-transparent" />
         <button
           onClick={() => navigate('/')}
-          className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 backdrop-blur text-charcoal text-sm font-medium hover:bg-white transition-all"
+          className="absolute top-20 sm:top-24 left-4 sm:left-6 z-10 flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 shadow-sm backdrop-blur text-charcoal text-sm font-medium hover:bg-white transition-all"
         >
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
@@ -129,7 +144,9 @@ export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?:
 
       <div className="container-page">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row gap-6 -mt-16 sm:-mt-20 relative">
+        <div className="relative -mt-12 sm:-mt-16 pb-2">
+          <div className="rounded-3xl bg-warm-white/95 backdrop-blur-sm sm:bg-transparent sm:backdrop-blur-none p-4 sm:p-0">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-end">
           {/* Logo */}
           <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden bg-white shadow-xl ring-4 ring-warm-white flex-shrink-0">
             {restaurant.logo_url ? (
@@ -142,7 +159,7 @@ export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?:
           </div>
 
           {/* Info */}
-          <div className="flex-1 pt-2">
+          <div className="flex-1 sm:pb-1">
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <h1 className="font-serif text-3xl sm:text-4xl font-bold text-charcoal">{restaurant.name}</h1>
               {restaurant.verified && (
@@ -167,21 +184,27 @@ export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?:
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={handleFollow}
-              className={following ? 'btn-outline' : 'btn-primary'}
-            >
-              <Heart className={`w-4 h-4 ${following ? 'fill-orange text-orange' : ''}`} />
-              {following ? 'Following' : 'Follow'}
-            </button>
-            <button onClick={handleDirections} className="btn-orange">
-              <MapPin className="w-4 h-4" /> Get Directions
-            </button>
-            <button onClick={handleShare} className="btn-outline !px-3">
-              <Share2 className="w-4 h-4" />
-            </button>
+            </div>
+
+            {/* Actions */}
+            <div className="grid grid-cols-3 gap-2 sm:ml-36 sm:pl-6 mt-5">
+              <button
+                onClick={handleRecommend}
+                aria-pressed={recommended}
+                className={`btn-outline w-full min-w-0 !px-2 sm:!px-4 ${recommended ? '!border-orange/40 !bg-orange/10 !text-orange-600' : ''}`}
+              >
+                <ThumbsUp className={`w-4 h-4 flex-shrink-0 ${recommended ? 'fill-current' : ''}`} />
+                <span className="truncate">{recommended ? 'Recommended' : 'Recommend'}</span>
+              </button>
+              <button onClick={handleDirections} className="btn-orange w-full min-w-0 !px-2 sm:!px-4 shadow-sm">
+                <MapPin className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">Get Directions</span>
+              </button>
+              <button onClick={handleShare} className="btn-outline w-full min-w-0 !px-2 sm:!px-4">
+                <Share2 className="w-4 h-4 flex-shrink-0" />
+                <span>Share</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -200,8 +223,8 @@ export function RestaurantProfilePage({ slug, dealId }: { slug: string; dealId?:
             </div>
           )}
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-cream">
-            <span className="text-lg font-bold text-charcoal">{followerCount}</span>
-            <span className="text-sm text-muted-text">Followers</span>
+            <span className="text-lg font-bold text-charcoal">{recommended ? 1 : 0}</span>
+            <span className="text-sm text-muted-text">Recommendations</span>
           </div>
         </div>
 

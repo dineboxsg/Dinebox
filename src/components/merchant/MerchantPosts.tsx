@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Edit3, Trash2, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Restaurant, Post, PostType } from '@/lib/types';
+import { ImageUpload } from '@/components/ImageUpload';
 
 const postTypes: { value: PostType; label: string }[] = [
   { value: 'update', label: 'Update' },
@@ -109,10 +110,7 @@ export function MerchantPosts({ restaurant }: { restaurant: Restaurant }) {
                 <label className="text-sm font-medium text-charcoal mb-1.5 block">Description</label>
                 <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} className="input-field resize-none" placeholder="Tell customers about it..." />
               </div>
-              <div>
-                <label className="text-sm font-medium text-charcoal mb-1.5 block">Image URL</label>
-                <input type="url" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="input-field" placeholder="https://..." />
-              </div>
+              <ImageUpload label="Post image" value={form.image_url} onChange={(image_url) => setForm({ ...form, image_url })} restaurantId={restaurant.id} folder="posts" optional />
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-charcoal mb-1.5 block">CTA Text (optional)</label>

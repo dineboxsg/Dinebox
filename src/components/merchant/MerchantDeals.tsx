@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Edit3, Trash2, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Restaurant, Deal } from '@/lib/types';
+import { ImageUpload } from '@/components/ImageUpload';
 
 export function MerchantDeals({ restaurant }: { restaurant: Restaurant }) {
   const [deals, setDeals] = useState<Deal[]>([]);
@@ -92,10 +93,7 @@ export function MerchantDeals({ restaurant }: { restaurant: Restaurant }) {
                 <label className="text-sm font-medium text-charcoal mb-1.5 block">Description</label>
                 <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="input-field resize-none" />
               </div>
-              <div>
-                <label className="text-sm font-medium text-charcoal mb-1.5 block">Image URL</label>
-                <input type="url" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="input-field" placeholder="https://..." />
-              </div>
+              <ImageUpload label="Deal image" value={form.image_url} onChange={(image_url) => setForm({ ...form, image_url })} restaurantId={restaurant.id} folder="deals" optional />
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-charcoal mb-1.5 block">Start Date</label>

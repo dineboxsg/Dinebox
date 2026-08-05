@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Trash2, X, BadgeCheck, Clock, XCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Restaurant, Award } from '@/lib/types';
+import { ImageUpload } from '@/components/ImageUpload';
 
 export function MerchantRecognition({ restaurant }: { restaurant: Restaurant }) {
   const [awards, setAwards] = useState<Award[]>([]);
@@ -83,10 +84,7 @@ export function MerchantRecognition({ restaurant }: { restaurant: Restaurant }) 
                 <label className="text-sm font-medium text-charcoal mb-1.5 block">Description</label>
                 <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className="input-field resize-none" />
               </div>
-              <div>
-                <label className="text-sm font-medium text-charcoal mb-1.5 block">Image/Logo URL (optional)</label>
-                <input type="url" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} className="input-field" />
-              </div>
+              <ImageUpload label="Award image or logo" value={form.image_url} onChange={(image_url) => setForm({ ...form, image_url })} restaurantId={restaurant.id} folder="awards" optional />
               <button onClick={handleSubmit} className="btn-primary w-full">Submit for Verification</button>
             </div>
           </div>
