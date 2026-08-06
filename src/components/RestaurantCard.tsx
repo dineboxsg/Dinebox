@@ -1,4 +1,4 @@
-import { TrendingUp, MapPin, Star, BadgeCheck } from 'lucide-react';
+import { TrendingUp, Star, BadgeCheck } from 'lucide-react';
 import type { Restaurant, RankingScore } from '@/lib/types';
 import { navigate } from '@/lib/router';
 import { DEFAULT_RESTAURANT_LOGO } from '@/lib/restaurant-logo';
@@ -16,9 +16,9 @@ export function RestaurantCard({ restaurant, ranking, variant = 'default' }: Res
     return (
       <button
         onClick={() => navigate(`/r/${restaurant.slug}`)}
-        className="flex-shrink-0 w-72 group text-left"
+        className="group w-72 flex-shrink-0 rounded-[1.5rem] border border-beige/60 bg-white p-3 text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange/20 hover:shadow-[0_18px_35px_rgba(62,46,34,0.12)] sm:w-auto"
       >
-        <div className="relative h-44 rounded-2xl overflow-hidden bg-cream">
+        <div className="relative h-44 overflow-hidden rounded-[1.1rem] bg-cream">
           {restaurant.cover_image_url ? (
             <img
               src={restaurant.cover_image_url}
@@ -42,11 +42,11 @@ export function RestaurantCard({ restaurant, ranking, variant = 'default' }: Res
             </div>
           )}
         </div>
-        <div className="mt-3">
-          <h3 className="font-semibold text-charcoal truncate">{restaurant.name}</h3>
-          <p className="text-sm text-muted-text mt-0.5">{restaurant.cuisine} · {restaurant.location}</p>
-          <div className="flex items-center gap-2 mt-2">
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-cream">
+        <div className="mt-4 px-1 pb-1">
+          <h3 className="truncate font-semibold tracking-tight text-charcoal">{restaurant.name}</h3>
+          <p className="mt-1 text-sm text-muted-text">{restaurant.cuisine} · {restaurant.location}</p>
+          <div className="mt-3 flex items-center gap-2">
+            <div className="flex items-center gap-1 rounded-lg bg-cream px-2 py-1">
               <span className="text-xs font-semibold text-charcoal">{Math.round(score)}</span>
               <span className="text-xs text-muted-text">Score</span>
             </div>

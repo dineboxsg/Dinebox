@@ -1,5 +1,5 @@
 import { navigate } from '@/lib/router';
-import { Instagram, Facebook, Mail, MapPin, ArrowUpRight } from 'lucide-react';
+import { Instagram, Facebook, Mail, MapPin, MessageCircle } from 'lucide-react';
 
 const discoverLinks = [
   { label: 'Trending', path: '/trending' },
@@ -30,7 +30,7 @@ export function Footer() {
       </div>
 
       <div className="relative container-page py-16">
-        {/* Top section: brand statement + newsletter */}
+        {/* Top section: brand statement + WhatsApp contact */}
         <div className="pb-14 border-b border-warm-white/10">
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,28rem)] lg:gap-16 lg:items-start">
             <div className="max-w-xl text-center lg:text-left">
@@ -71,27 +71,21 @@ export function Footer() {
             </div>
 
             <div className="text-center lg:text-left">
-            <h3 className="text-lg font-semibold mb-2">Stay in the loop</h3>
+            <div className="rounded-2xl border border-warm-white/15 bg-warm-white/5 p-6">
+            <h3 className="text-lg font-semibold mb-2">Need more information?</h3>
             <p className="text-warm-white/50 text-sm mb-5">
-              Get the latest deals, trending spots, and DineBox 50 updates delivered to your inbox.
+              Message the DineBox team on WhatsApp and we’ll be happy to help.
             </p>
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="flex flex-col sm:flex-row gap-3"
+            <a
+              href="https://wa.me/6581609698?text=Hi%20DineBox%2C%20I%27d%20like%20more%20information."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-orange text-charcoal font-semibold text-sm hover:bg-orange-400 transition-all duration-300 hover:shadow-lg hover:shadow-orange/30"
             >
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="flex-1 px-4 py-3 rounded-xl bg-warm-white/5 border border-warm-white/15 text-warm-white placeholder:text-warm-white/30 text-sm focus:outline-none focus:border-orange focus:bg-warm-white/10 transition-all"
-              />
-              <button
-                type="submit"
-                className="px-6 py-3 rounded-xl bg-orange text-charcoal font-semibold text-sm hover:bg-orange-400 transition-all duration-300 hover:shadow-lg hover:shadow-orange/30 flex items-center justify-center gap-1.5 group"
-              >
-                Subscribe
-                <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </button>
-            </form>
+              <MessageCircle size={18} />
+              WhatsApp us
+            </a>
+            </div>
             </div>
           </div>
         </div>

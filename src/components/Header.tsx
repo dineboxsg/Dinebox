@@ -35,7 +35,9 @@ export function Header({ onSearch }: { onSearch?: (q: string) => void }) {
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? 'bg-warm-white/90 backdrop-blur-lg shadow-sm' : 'bg-transparent'
+          scrolled
+            ? 'border-b border-beige/40 bg-warm-white/95 shadow-sm backdrop-blur-lg'
+            : 'border-b border-white/50 bg-warm-white/85 shadow-sm backdrop-blur-lg'
         }`}
       >
         <div className="container-page">

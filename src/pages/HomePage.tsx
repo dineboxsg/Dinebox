@@ -6,7 +6,7 @@ import type { Restaurant, Post, Deal, RankingScore } from '@/lib/types';
 import { RestaurantCard } from '@/components/RestaurantCard';
 import { PostCard } from '@/components/PostCard';
 import { DealCard } from '@/components/DealCard';
-import { RankingRow, MovementBadge } from '@/components/RankingRow';
+import { RankingRow } from '@/components/RankingRow';
 import { supabase } from '@/lib/supabase';
 
 const DEFAULT_HERO_BACKGROUND = '/dinebox-scan-background.jpeg';
@@ -93,44 +93,44 @@ export function HomePage() {
   ].slice(0, 6);
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in bg-warm-white">
       {/* HERO */}
-      <section className="relative pt-20 pb-16 sm:pt-28 sm:pb-24 overflow-hidden">
+      <section className="relative overflow-hidden bg-charcoal pt-24 pb-28 sm:pt-32 sm:pb-36">
         <img src={heroBackgroundUrl} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover object-center" />
-        <div className="absolute inset-0 bg-gradient-to-b from-warm-white/25 via-warm-white/40 to-warm-white/65" />
-        <div className="absolute top-20 right-0 w-96 h-96 bg-orange/5 rounded-full blur-3xl" />
-        <div className="absolute top-40 left-0 w-96 h-96 bg-orange/5 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-br from-charcoal/85 via-orange-600/65 to-charcoal/80" />
+        <div className="absolute -top-24 right-[8%] h-96 w-96 rounded-full bg-orange-200/25 blur-3xl" />
+        <div className="absolute bottom-0 left-[8%] h-72 w-72 rounded-full bg-orange/20 blur-3xl" />
 
         <div className="container-page relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange/10 text-orange-600 text-sm font-medium mb-6 animate-slide-up">
+          <div className="mx-auto max-w-4xl text-center">
+            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-warm-white shadow-sm backdrop-blur animate-slide-up">
               <Sparkles className="w-4 h-4" />
               Singapore's Live F&B Discovery Platform
             </div>
-            <h1 className="font-serif text-5xl sm:text-7xl font-bold text-charcoal mb-4 animate-slide-up tracking-tight">
+            <h1 className="mb-5 font-serif text-5xl font-bold tracking-[-0.04em] text-white sm:text-7xl animate-slide-up">
               DineBox
             </h1>
-            <p className="font-serif text-2xl sm:text-3xl text-charcoal/80 mb-3 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <p className="mb-4 font-serif text-2xl text-warm-white/90 sm:text-3xl animate-slide-up" style={{ animationDelay: '0.1s' }}>
               What's happening in Singapore's F&B scene?
             </p>
-            <p className="text-base sm:text-lg text-muted-text max-w-2xl mx-auto mb-8 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <p className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-warm-white/75 sm:text-lg animate-slide-up" style={{ animationDelay: '0.2s' }}>
               Discover the latest deals, new menus, events, restaurant updates and trending food spots.
             </p>
 
             {/* Search */}
-            <form onSubmit={handleSearch} className="max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '0.3s' }}>
-              <div className="relative group">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-text group-focus-within:text-orange transition-colors" />
+            <form onSubmit={handleSearch} className="mx-auto max-w-3xl animate-slide-up" style={{ animationDelay: '0.3s' }}>
+              <div className="group relative rounded-full border border-white/80 bg-white p-2 shadow-[0_20px_60px_rgba(0,0,0,0.2)] backdrop-blur">
+                <Search className="absolute left-7 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-text transition-colors group-focus-within:text-orange" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search restaurants, dishes or what's happening"
-                  className="w-full pl-14 pr-6 py-4 sm:py-5 rounded-full bg-white border border-beige/60 shadow-lg shadow-charcoal/5 text-charcoal placeholder:text-muted-text/60 focus:outline-none focus:border-orange/40 focus:ring-4 focus:ring-orange/10 transition-all text-base"
+                  className="w-full rounded-full border border-transparent bg-transparent py-4 pl-14 pr-28 text-base text-charcoal placeholder:text-muted-text/60 outline-none transition-all focus:border-orange/20 focus:bg-cream/40 sm:py-5"
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 btn-orange rounded-full px-4 py-2.5"
+                  className="absolute right-2 top-1/2 inline-flex -translate-y-1/2 items-center justify-center rounded-full bg-charcoal px-5 py-3 text-sm font-semibold text-white transition-all hover:-translate-y-1/2 hover:bg-charcoal-700 hover:shadow-lg active:scale-95"
                 >
                   Search
                 </button>
@@ -140,20 +140,20 @@ export function HomePage() {
         </div>
       </section>
 
-      <div className="flex flex-col">
+      <div className="relative z-10 -mt-12 flex flex-col border-t-4 border-orange bg-warm-white sm:-mt-16">
       {/* TRENDING RIGHT NOW */}
-      <section className="order-2 py-12 sm:py-16">
+      <section className="order-2 border-t border-beige/60 bg-warm-white py-16 sm:py-24">
         <div className="container-page">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
+          <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div className="rounded-[24px] border border-orange/20 bg-gradient-to-r from-orange-100 via-amber-50 to-orange-50 px-5 py-5 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.35)] sm:px-6">
+              <div className="mb-3 flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-orange" />
-                <span className="text-sm font-medium text-orange uppercase tracking-wider">Trending Right Now</span>
+                <span className="text-xs font-bold uppercase tracking-[0.16em] text-orange-700">Trending Right Now</span>
               </div>
               <h2 className="section-title">Trending Right Now</h2>
               <p className="section-subtitle">What's getting attention across Singapore.</p>
             </div>
-            <button onClick={() => navigate('/trending')} className="hidden sm:flex btn-ghost">
+            <button onClick={() => navigate('/trending')} className="hidden border border-beige/70 bg-white px-4 py-2 text-sm font-semibold text-charcoal shadow-sm transition-all hover:-translate-y-0.5 hover:border-orange/30 hover:text-orange sm:inline-flex sm:items-center sm:gap-2">
               View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -165,7 +165,7 @@ export function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="flex overflow-x-auto no-scrollbar gap-5 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 pb-2">
+            <div className="flex overflow-x-auto no-scrollbar gap-5 pb-2 sm:grid sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               {trendingRestaurants.map((rest) => {
                 const ranking = rankings.find(r => r.restaurant_id === rest.id);
                 return <RestaurantCard key={rest.id} restaurant={rest} ranking={ranking} variant="horizontal" />;
@@ -179,18 +179,18 @@ export function HomePage() {
       </section>
 
       {/* DINEBOX 50 */}
-      <section className="order-5 py-12 sm:py-16 bg-cream/40">
+      <section className="order-5 border-t border-beige/60 bg-cream/50 py-16 sm:py-24">
         <div className="container-page">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
+          <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div className="rounded-[24px] border border-orange/20 bg-gradient-to-r from-orange-100 via-amber-50 to-orange-50 px-5 py-5 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.35)] sm:px-6">
+              <div className="mb-3 flex items-center gap-2">
                 <Star className="w-5 h-5 text-orange" />
-                <span className="text-sm font-medium text-orange uppercase tracking-wider">DineBox 50</span>
+                <span className="text-xs font-bold uppercase tracking-[0.16em] text-orange-700">DineBox 50</span>
               </div>
               <h2 className="section-title">Singapore's F&B Chart</h2>
               <p className="section-subtitle">The restaurants performing strongly on DineBox.</p>
             </div>
-            <button onClick={() => navigate('/dinebox-50')} className="hidden sm:flex btn-ghost">
+            <button onClick={() => navigate('/dinebox-50')} className="hidden border border-beige/70 bg-white px-4 py-2 text-sm font-semibold text-charcoal shadow-sm transition-all hover:-translate-y-0.5 hover:border-orange/30 hover:text-orange sm:inline-flex sm:items-center sm:gap-2">
               View DineBox 50 <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -217,12 +217,12 @@ export function HomePage() {
       </section>
 
       {/* LATEST FEED */}
-      <section className="order-6 py-12 sm:py-16">
+      <section className="order-6 border-t border-beige/60 bg-warm-white py-16 sm:py-24">
         <div className="container-page">
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="mb-10 rounded-[24px] border border-orange/20 bg-gradient-to-r from-orange-100 via-amber-50 to-orange-50 px-5 py-5 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.35)] sm:px-6">
+            <div className="mb-3 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-orange" />
-              <span className="text-sm font-medium text-orange uppercase tracking-wider">Latest Feed</span>
+              <span className="text-xs font-bold uppercase tracking-[0.16em] text-orange">Latest Feed</span>
             </div>
             <h2 className="section-title">Latest from Singapore's F&B Scene</h2>
             <p className="section-subtitle">Restaurant updates, deals, new menus and more.</p>
@@ -235,7 +235,7 @@ export function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-10">
+            <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-12">
               {posts.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
@@ -245,17 +245,17 @@ export function HomePage() {
       </section>
 
       {/* DEALS */}
-      <section className="order-4 py-12 sm:py-16 bg-cream/40">
+      <section className="order-4 border-t border-beige/60 bg-orange-50 py-16 sm:py-24">
         <div className="container-page">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm font-medium text-orange uppercase tracking-wider">Deals</span>
+          <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div className="rounded-[24px] border border-orange/20 bg-gradient-to-r from-orange-100 via-amber-50 to-orange-50 px-5 py-5 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.35)] sm:px-6">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-[0.16em] text-charcoal/70">Deals</span>
               </div>
               <h2 className="section-title">Deals Right Now</h2>
               <p className="section-subtitle">Offers currently available from restaurants across Singapore.</p>
             </div>
-            <button onClick={() => navigate('/deals')} className="hidden sm:flex btn-ghost">
+            <button onClick={() => navigate('/deals')} className="hidden border border-beige/70 bg-white px-4 py-2 text-sm font-semibold text-charcoal shadow-sm transition-all hover:-translate-y-0.5 hover:border-orange/30 hover:text-orange sm:inline-flex sm:items-center sm:gap-2">
               View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -267,7 +267,7 @@ export function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {deals.map((deal) => (
                 <DealCard key={deal.id} deal={deal} />
               ))}
@@ -277,12 +277,12 @@ export function HomePage() {
       </section>
 
       {/* NEW & RISING */}
-      <section className="order-3 py-12 sm:py-16">
+      <section className="order-3 border-t border-beige/60 bg-cream/40 py-16 sm:py-24">
         <div className="container-page">
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="mb-10 rounded-[24px] border border-orange/20 bg-gradient-to-r from-orange-100 via-amber-50 to-orange-50 px-5 py-5 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.35)] sm:px-6">
+            <div className="mb-3 flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-orange" />
-              <span className="text-sm font-medium text-orange uppercase tracking-wider">New & Rising</span>
+              <span className="text-xs font-bold uppercase tracking-[0.16em] text-charcoal/70">New & Rising</span>
             </div>
             <h2 className="section-title">New & Rising</h2>
             <p className="section-subtitle">Recently opened restaurants gaining attention.</p>
@@ -295,7 +295,7 @@ export function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="flex overflow-x-auto no-scrollbar gap-5 pb-2">
+            <div className="flex gap-5 overflow-x-auto pb-2 no-scrollbar">
               {newRestaurants.map((rest) => (
                 <RestaurantCard key={rest.id} restaurant={rest} ranking={rankingLookup.get(rest.id)} variant="horizontal" />
               ))}
@@ -306,18 +306,18 @@ export function HomePage() {
 
       {/* FEATURED */}
       {featured.length > 0 && (
-        <section className="order-1 py-12 sm:py-16 bg-cream/40">
+        <section className="order-1 border-t border-beige/60 bg-orange-50 py-16 sm:py-24">
           <div className="container-page">
-            <div className="mb-8">
-              <div className="flex items-center gap-2 mb-2">
+            <div className="mb-10 rounded-[28px] border border-orange/20 bg-gradient-to-r from-orange-100 via-amber-50 to-orange-50 px-5 py-5 shadow-[0_20px_50px_-24px_rgba(0,0,0,0.35)] sm:px-6">
+              <div className="mb-3 flex items-center gap-2">
                 <Star className="w-5 h-5 text-orange" />
-                <span className="text-sm font-medium text-orange uppercase tracking-wider">Featured</span>
+                <span className="text-xs font-bold uppercase tracking-[0.16em] text-charcoal/70">Featured</span>
               </div>
               <h2 className="section-title">Featured on DineBox</h2>
               <p className="section-subtitle">Handpicked restaurants to explore.</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {featured.map((rest) => (
                 <RestaurantCard key={rest.id} restaurant={rest} ranking={rankingLookup.get(rest.id)} />
               ))}
