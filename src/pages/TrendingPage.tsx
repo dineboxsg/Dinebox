@@ -14,7 +14,7 @@ export function TrendingPage() {
   const [filter, setFilter] = useState<FilterType>('all');
 
   useEffect(() => {
-    Promise.all([getRankings(20), getActiveDeals(6), getNewRestaurants(8)])
+    Promise.all([getRankings(50), getActiveDeals(6), getNewRestaurants(8)])
       .then(([rk, d, n]) => {
         setRankings(rk);
         setDeals(d);
@@ -22,6 +22,8 @@ export function TrendingPage() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  const rankingLookup = new Map(rankings.map((ranking) => [ranking.restaurant_id, ranking]));
 
   const filters: { label: string; value: FilterType }[] = [
     { label: 'All', value: 'all' },
@@ -91,7 +93,7 @@ export function TrendingPage() {
                 )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {newRestaurants.map((rest) => (
-                    <RestaurantCard key={rest.id} restaurant={rest} />
+                    <RestaurantCard key={rest.id} restaurant={rest} ranking={rankingLookup.get(rest.id)} />
                   ))}
                 </div>
               </div>

@@ -103,7 +103,7 @@ export function MerchantDashboard() {
 
             <div className="mt-6 pt-6 border-t border-beige/40">
               <a
-                href={`#/d/${restaurant.slug}`}
+                href={`/d/${restaurant.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-charcoal/70 hover:bg-cream transition-all"

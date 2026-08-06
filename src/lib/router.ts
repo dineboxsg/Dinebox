@@ -6,41 +6,43 @@ export interface Route {
   query: URLSearchParams;
 }
 
-function parseHash(): Route {
-  const hash = window.location.hash.slice(1) || '/';
-  const [path, queryString] = hash.split('?');
+function parseLocation(): Route {
+  const [path, queryString] = window.location.pathname.split('?');
+  const cleanPath = path || '/';
   return {
-    path: path || '/',
+    path: cleanPath,
     params: {},
     query: new URLSearchParams(queryString || ''),
   };
 }
 
 export function useRouter() {
-  const [route, setRoute] = useState<Route>(parseHash);
+  const [route, setRoute] = useState<Route>(parseLocation);
 
   useEffect(() => {
     const handler = () => {
-      setRoute(parseHash());
+      setRoute(parseLocation());
       window.scrollTo(0, 0);
     };
-    window.addEventListener('hashchange', handler);
-    return () => window.removeEventListener('hashchange', handler);
+    window.addEventListener('popstate', handler);
+    return () => window.removeEventListener('popstate', handler);
   }, []);
 
   const navigate = useCallback((to: string) => {
-    if (!to.startsWith('#')) {
-      window.location.hash = to;
-    } else {
-      window.location.hash = to.slice(1);
-    }
+    const normalized = to.startsWith('#') ? to.slice(1) : to;
+    const nextPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
+    window.history.pushState({}, '', nextPath);
+    setRoute(parseLocation());
+    window.scrollTo(0, 0);
   }, []);
 
   return { route, navigate };
 }
 
 export function navigate(to: string) {
-  window.location.hash = to;
+  const normalized = to.startsWith('#') ? to.slice(1) : to;
+  const nextPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
+  window.history.pushState({}, '', nextPath);
 }
 
 // Match a path pattern like "/d/:slug" against actual path "/d/bella-napoli"

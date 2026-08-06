@@ -33,7 +33,7 @@ export function HomePage() {
           getActiveDeals(6),
           getFeaturedRestaurants(),
           getNewRestaurants(6),
-          getRankings(10),
+          getRankings(50),
         ]);
 
       if (!active) return;
@@ -50,7 +50,7 @@ export function HomePage() {
     void loadHomePage();
 
     const refreshRankings = () => {
-      void getRankings(10).then((data) => {
+      void getRankings(50).then((data) => {
         if (active) setRankings(data);
       });
     };
@@ -82,6 +82,7 @@ export function HomePage() {
     }
   };
 
+  const rankingLookup = new Map(rankings.map((ranking) => [ranking.restaurant_id, ranking]));
   const rankedRestaurants = rankings
     .map((ranking) => ranking.restaurant)
     .filter((restaurant): restaurant is Restaurant => Boolean(restaurant));
@@ -296,7 +297,7 @@ export function HomePage() {
           ) : (
             <div className="flex overflow-x-auto no-scrollbar gap-5 pb-2">
               {newRestaurants.map((rest) => (
-                <RestaurantCard key={rest.id} restaurant={rest} variant="horizontal" />
+                <RestaurantCard key={rest.id} restaurant={rest} ranking={rankingLookup.get(rest.id)} variant="horizontal" />
               ))}
             </div>
           )}
@@ -318,7 +319,7 @@ export function HomePage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {featured.map((rest) => (
-                <RestaurantCard key={rest.id} restaurant={rest} />
+                <RestaurantCard key={rest.id} restaurant={rest} ranking={rankingLookup.get(rest.id)} />
               ))}
             </div>
           </div>

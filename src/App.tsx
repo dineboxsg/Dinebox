@@ -58,7 +58,7 @@ function AppContent() {
         <div className="pt-32 pb-16 text-center container-page">
           <h1 className="font-serif text-4xl font-bold text-charcoal mb-2">404</h1>
           <p className="text-muted-text mb-6">This page doesn't exist.</p>
-          <button onClick={() => (window.location.hash = '/')} className="btn-primary">Back to DineBox</button>
+          <button onClick={() => (window.history.pushState({}, '', '/'))} className="btn-primary">Back to DineBox</button>
         </div>
       );
     }
