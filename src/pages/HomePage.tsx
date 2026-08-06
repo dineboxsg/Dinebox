@@ -49,8 +49,17 @@ export function HomePage() {
 
     void loadHomePage();
 
+    const refreshRankings = () => {
+      void getRankings(10).then((data) => {
+        if (active) setRankings(data);
+      });
+    };
+
+    const refreshTimer = window.setInterval(refreshRankings, 15_000);
+
     return () => {
       active = false;
+      window.clearInterval(refreshTimer);
     };
   }, []);
 

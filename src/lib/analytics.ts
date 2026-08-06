@@ -23,7 +23,7 @@ export async function trackEvent(
 ) {
   try {
     const sessionId = getSessionId();
-    await supabase.from('analytics_events').insert({
+    const { error: insertError } = await supabase.from('analytics_events').insert({
       restaurant_id: restaurantId,
       event_type: eventType,
       session_id: sessionId,
@@ -31,6 +31,10 @@ export async function trackEvent(
       deal_id: extra?.deal_id ?? null,
       metadata: extra?.metadata ?? {},
     });
+
+    if (insertError) throw insertError;
+
+    await supabase.rpc('refresh_dinebox_rankings').catch(() => undefined);
   } catch {
     // silent fail - analytics shouldn't break UX
   }
