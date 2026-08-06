@@ -153,7 +153,7 @@ export function HomePage() {
               <h2 className="section-title">Trending Right Now</h2>
               <p className="section-subtitle">What's getting attention across Singapore.</p>
             </div>
-            <button onClick={() => navigate('#/trending')} className="hidden sm:flex btn-ghost">
+            <button onClick={() => navigate('/trending')} className="hidden sm:flex btn-ghost">
               View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -190,7 +190,7 @@ export function HomePage() {
               <h2 className="section-title">Singapore's F&B Chart</h2>
               <p className="section-subtitle">The restaurants performing strongly on DineBox.</p>
             </div>
-            <button onClick={() => navigate('#/dinebox-50')} className="hidden sm:flex btn-ghost">
+            <button onClick={() => navigate('/dinebox-50')} className="hidden sm:flex btn-ghost">
               View DineBox 50 <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -209,7 +209,7 @@ export function HomePage() {
             </div>
           )}
           <div className="mt-6 sm:hidden">
-            <button onClick={() => navigate('#/dinebox-50')} className="btn-outline w-full">
+            <button onClick={() => navigate('/dinebox-50')} className="btn-outline w-full">
               View DineBox 50 <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -255,7 +255,7 @@ export function HomePage() {
               <h2 className="section-title">Deals Right Now</h2>
               <p className="section-subtitle">Offers currently available from restaurants across Singapore.</p>
             </div>
-            <button onClick={() => navigate('#/deals')} className="hidden sm:flex btn-ghost">
+            <button onClick={() => navigate('/deals')} className="hidden sm:flex btn-ghost">
               View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>

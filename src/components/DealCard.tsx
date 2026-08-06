@@ -37,7 +37,7 @@ export function DealCard({ deal, restaurant }: DealCardProps) {
   return (
     <div className="group rounded-2xl overflow-hidden bg-white border border-beige/40 card-hover">
       <button
-        onClick={() => slug && navigate(`/d/${slug}?deal=${deal.id}`)}
+        onClick={() => slug && navigate(`/r/${slug}?deal=${deal.id}`)}
         className="block w-full text-left"
       >
         <div className="relative h-48 overflow-hidden bg-cream">
@@ -68,14 +68,14 @@ export function DealCard({ deal, restaurant }: DealCardProps) {
       </button>
       <div className="p-5">
         {rest && (
-          <button onClick={() => navigate(`/d/${rest.slug}`)} className="flex items-center gap-2 mb-2">
+          <button onClick={() => navigate(`/r/${rest.slug}`)} className="flex items-center gap-2 mb-2">
             <div className="w-6 h-6 rounded-full overflow-hidden bg-cream flex-shrink-0">
               <img src={rest.logo_url || DEFAULT_RESTAURANT_LOGO} alt={rest.name} loading="lazy" className="w-full h-full object-contain bg-white p-1" />
             </div>
             <span className="text-xs text-muted-text">{rest.name} · {rest.location}</span>
           </button>
         )}
-        <button onClick={() => slug && navigate(`/d/${slug}?deal=${deal.id}`)} className="block text-left w-full">
+        <button onClick={() => slug && navigate(`/r/${slug}?deal=${deal.id}`)} className="block text-left w-full">
           <h3 className="font-serif text-lg font-semibold text-charcoal mb-1">{deal.title}</h3>
           <p className="text-sm text-muted-text line-clamp-2">{deal.description}</p>
         </button>
@@ -84,7 +84,7 @@ export function DealCard({ deal, restaurant }: DealCardProps) {
             {deal.start_time && deal.end_time ? `${deal.start_time}–${deal.end_time}` : formatValidity(deal)}
           </span>
           <button
-            onClick={() => slug && navigate(`/d/${slug}?deal=${deal.id}`)}
+            onClick={() => slug && navigate(`/r/${slug}?deal=${deal.id}`)}
             className="text-sm font-medium text-charcoal hover:text-orange flex items-center gap-1 transition-colors"
           >
             View Deal

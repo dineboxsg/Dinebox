@@ -15,7 +15,7 @@ export function RestaurantCard({ restaurant, ranking, variant = 'default' }: Res
   if (variant === 'horizontal') {
     return (
       <button
-        onClick={() => navigate(`/d/${restaurant.slug}`)}
+        onClick={() => navigate(`/r/${restaurant.slug}`)}
         className="flex-shrink-0 w-72 group text-left"
       >
         <div className="relative h-44 rounded-2xl overflow-hidden bg-cream">
@@ -64,7 +64,7 @@ export function RestaurantCard({ restaurant, ranking, variant = 'default' }: Res
 
   return (
     <button
-      onClick={() => navigate(`/d/${restaurant.slug}`)}
+      onClick={() => navigate(`/r/${restaurant.slug}`)}
       className="group text-left w-full"
     >
       <div className="relative h-56 sm:h-64 rounded-2xl overflow-hidden bg-cream card-hover">
@@ -118,7 +118,7 @@ export function RestaurantCard({ restaurant, ranking, variant = 'default' }: Res
 export function RestaurantCardSmall({ restaurant, ranking }: { restaurant: Restaurant; ranking?: RankingScore | null }) {
   return (
     <button
-      onClick={() => navigate(`/d/${restaurant.slug}`)}
+      onClick={() => navigate(`/r/${restaurant.slug}`)}
       className="flex items-center gap-3 p-3 rounded-2xl hover:bg-cream/50 transition-all w-full text-left"
     >
       <div className="w-14 h-14 rounded-xl overflow-hidden bg-cream flex-shrink-0">

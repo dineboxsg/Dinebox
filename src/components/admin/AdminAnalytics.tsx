@@ -34,7 +34,7 @@ export function AdminAnalytics() {
         <h2 className="font-semibold text-charcoal mb-4">Top Restaurants</h2>
         <div className="space-y-2">
           {topRestaurants.map((rk, i) => (
-            <button key={rk.id} onClick={() => navigate(`/d/${rk.restaurant.slug}`)}
+            <button key={rk.id} onClick={() => navigate(`/r/${rk.restaurant.slug}`)}
               className="flex items-center gap-4 p-3 rounded-xl hover:bg-cream/50 transition-all w-full text-left">
               <span className="font-serif text-lg font-bold text-charcoal/40 w-8">{i + 1}</span>
               <div className="flex-1 min-w-0">

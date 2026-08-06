@@ -58,7 +58,7 @@ export function PostCard({ post, restaurant, variant = 'large' }: PostCardProps)
     <article className="group">
       {/* Header */}
       <div className="flex items-center gap-3 mb-3">
-        <button onClick={() => navigate(`/d/${rest.slug}`)} className="flex items-center gap-3 group/rest">
+        <button onClick={() => navigate(`/r/${rest.slug}`)} className="flex items-center gap-3 group/rest">
           <div className="w-10 h-10 rounded-full overflow-hidden bg-cream flex-shrink-0 ring-2 ring-cream">
             <img src={rest.logo_url || DEFAULT_RESTAURANT_LOGO} alt={rest.name} loading="lazy" className="w-full h-full object-contain bg-white p-1" />
           </div>
@@ -73,7 +73,7 @@ export function PostCard({ post, restaurant, variant = 'large' }: PostCardProps)
       </div>
 
       {/* Content */}
-      <button onClick={() => navigate(`/d/${rest.slug}`)} className="block text-left w-full">
+      <button onClick={() => navigate(`/r/${rest.slug}`)} className="block text-left w-full">
         <h3 className="font-serif text-xl sm:text-2xl font-semibold text-charcoal mb-2 group-hover:text-charcoal-700 transition-colors">
           {post.title}
         </h3>
@@ -82,7 +82,7 @@ export function PostCard({ post, restaurant, variant = 'large' }: PostCardProps)
 
       {/* Image */}
       {post.image_url && (
-        <button onClick={() => navigate(`/d/${rest.slug}`)} className="block w-full mb-4">
+        <button onClick={() => navigate(`/r/${rest.slug}`)} className="block w-full mb-4">
           <div className="rounded-2xl overflow-hidden bg-cream aspect-[16/10]">
             <img
               src={post.image_url}
@@ -96,7 +96,7 @@ export function PostCard({ post, restaurant, variant = 'large' }: PostCardProps)
 
       {/* CTA */}
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate(`/d/${rest.slug}`)} className="btn-ghost text-charcoal hover:text-orange">
+        <button onClick={() => navigate(`/r/${rest.slug}`)} className="btn-ghost text-charcoal hover:text-orange">
           View Restaurant
           <ArrowRight className="w-4 h-4" />
         </button>

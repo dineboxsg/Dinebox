@@ -1,5 +1,5 @@
 import { AuthProvider } from '@/lib/auth';
-import { useRouter, matchRoute } from '@/lib/router';
+import { useRouter, matchRoute, navigate } from '@/lib/router';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { HomePage } from '@/pages/HomePage';
@@ -31,7 +31,7 @@ function AppContent() {
   let page: React.ReactNode;
   let showChrome = true;
 
-  if (path === '/') {
+  if (path === '/' || path === '/discover') {
     page = <HomePage />;
   } else if (path === '/trending') {
     page = <TrendingPage />;
@@ -50,7 +50,7 @@ function AppContent() {
   } else if (path === '/contact') {
     page = <SitePage slug="contact" />;
   } else {
-    const restMatch = matchRoute('/d/:slug', path);
+    const restMatch = matchRoute('/r/:slug', path) ?? matchRoute('/d/:slug', path);
     if (restMatch) {
       page = <RestaurantProfilePage slug={restMatch.slug} dealId={route.query.get('deal') || undefined} />;
     } else {
@@ -58,7 +58,7 @@ function AppContent() {
         <div className="pt-32 pb-16 text-center container-page">
           <h1 className="font-serif text-4xl font-bold text-charcoal mb-2">404</h1>
           <p className="text-muted-text mb-6">This page doesn't exist.</p>
-          <button onClick={() => (window.history.pushState({}, '', '/'))} className="btn-primary">Back to DineBox</button>
+          <button onClick={() => navigate('/')} className="btn-primary">Back to DineBox</button>
         </div>
       );
     }

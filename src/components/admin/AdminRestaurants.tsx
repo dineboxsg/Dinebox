@@ -89,7 +89,7 @@ export function AdminRestaurants() {
                 )}
                 <button onClick={() => toggleVerified(r)} title="Toggle Verified" className={`p-2 rounded-lg ${r.verified ? 'bg-orange/10 text-orange' : 'bg-cream text-muted-text'}`}><BadgeCheck className="w-4 h-4" /></button>
                 <button onClick={() => toggleFeatured(r)} title="Toggle Featured" className={`p-2 rounded-lg ${r.featured ? 'bg-orange/10 text-orange' : 'bg-cream text-muted-text'}`}><Star className={`w-4 h-4 ${r.featured ? 'fill-orange' : ''}`} /></button>
-                <button onClick={() => navigate(`/d/${r.slug}`)} title="View" className="p-2 rounded-lg bg-cream text-charcoal hover:bg-beige"><ExternalLink className="w-4 h-4" /></button>
+                <button onClick={() => navigate(`/r/${r.slug}`)} title="View" className="p-2 rounded-lg bg-cream text-charcoal hover:bg-beige"><ExternalLink className="w-4 h-4" /></button>
               </div>
             </div>
           ))}

@@ -7,13 +7,21 @@ export interface Route {
 }
 
 function parseLocation(): Route {
-  const [path, queryString] = window.location.pathname.split('?');
-  const cleanPath = path || '/';
+  const path = window.location.pathname || '/';
   return {
-    path: cleanPath,
+    path,
     params: {},
-    query: new URLSearchParams(queryString || ''),
+    query: new URLSearchParams(window.location.search),
   };
+}
+
+function notifyRouteChange() {
+  window.dispatchEvent(new PopStateEvent('popstate'));
+}
+
+function toPath(to: string) {
+  const normalized = to.startsWith('#') ? to.slice(1) : to;
+  return normalized.startsWith('/') ? normalized : `/${normalized}`;
 }
 
 export function useRouter() {
@@ -29,23 +37,19 @@ export function useRouter() {
   }, []);
 
   const navigate = useCallback((to: string) => {
-    const normalized = to.startsWith('#') ? to.slice(1) : to;
-    const nextPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
-    window.history.pushState({}, '', nextPath);
-    setRoute(parseLocation());
-    window.scrollTo(0, 0);
+    window.history.pushState({}, '', toPath(to));
+    notifyRouteChange();
   }, []);
 
   return { route, navigate };
 }
 
 export function navigate(to: string) {
-  const normalized = to.startsWith('#') ? to.slice(1) : to;
-  const nextPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
-  window.history.pushState({}, '', nextPath);
+  window.history.pushState({}, '', toPath(to));
+  notifyRouteChange();
 }
 
-// Match a path pattern like "/d/:slug" against actual path "/d/bella-napoli"
+// Match a path pattern like "/r/:slug" against actual path "/r/bella-napoli"
 export function matchRoute(pattern: string, path: string): Record<string, string> | null {
   const patternParts = pattern.split('/').filter(Boolean);
   const pathParts = path.split('/').filter(Boolean);

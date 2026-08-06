@@ -47,7 +47,7 @@ export function RankingRow({ rank, restaurant, ranking, variant = 'full' }: Rank
 
   return (
     <button
-      onClick={() => navigate(`/d/${restaurant.slug}`)}
+      onClick={() => navigate(`/r/${restaurant.slug}`)}
       className={`flex items-center gap-4 w-full text-left transition-all duration-200 hover:bg-cream/40 ${
         variant === 'full' ? 'p-4 rounded-2xl' : 'p-3 rounded-xl'
       } ${isTop3 && variant === 'full' ? 'bg-cream/30' : ''}`}

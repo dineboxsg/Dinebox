@@ -44,7 +44,7 @@ export function MerchantMyDineBox({ restaurant, onUpdate }: { restaurant: Restau
     setSaving(false);
   };
 
-  const publicUrl = `${window.location.origin}/d/${restaurant.slug}`;
+  const publicUrl = `${window.location.origin}/r/${restaurant.slug}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(publicUrl)}`;
 
   const copyLink = () => {
