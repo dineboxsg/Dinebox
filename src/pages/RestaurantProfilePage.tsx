@@ -134,7 +134,7 @@ export function RestaurantProfilePage({ slug }: { slug: string; dealId?: string 
 
       <div className="container-page">
         {/* Header */}
-        <div className="relative -mt-12 sm:-mt-16 pb-2">
+        <div className="relative pt-6 sm:pt-8 pb-2">
           <div className="rounded-3xl bg-warm-white/95 backdrop-blur-sm sm:bg-transparent sm:backdrop-blur-none p-4 sm:p-0">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-end">
           {/* Logo */}
