@@ -15,6 +15,10 @@ function parseLocation(): Route {
   };
 }
 
+function scrollToTop() {
+  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+}
+
 function notifyRouteChange() {
   window.dispatchEvent(new PopStateEvent('popstate'));
 }
@@ -30,7 +34,7 @@ export function useRouter() {
   useEffect(() => {
     const handler = () => {
       setRoute(parseLocation());
-      window.scrollTo(0, 0);
+      scrollToTop();
     };
     window.addEventListener('popstate', handler);
     return () => window.removeEventListener('popstate', handler);
@@ -38,6 +42,7 @@ export function useRouter() {
 
   const navigate = useCallback((to: string) => {
     window.history.pushState({}, '', toPath(to));
+    scrollToTop();
     notifyRouteChange();
   }, []);
 
@@ -46,6 +51,7 @@ export function useRouter() {
 
 export function navigate(to: string) {
   window.history.pushState({}, '', toPath(to));
+  scrollToTop();
   notifyRouteChange();
 }
 
