@@ -20,7 +20,7 @@ CREATE POLICY admin_manage_site_pages ON site_pages FOR ALL
   TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 CREATE TABLE IF NOT EXISTS site_settings (
-  key text PRIMARY KEY CHECK (key = 'homepage_hero_image_url'),
+  key text PRIMARY KEY CHECK (key ~ '^[a-z0-9_]+$'),
   value text NOT NULL,
   updated_at timestamptz NOT NULL DEFAULT now()
 );

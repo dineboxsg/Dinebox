@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { AuthProvider } from '@/lib/auth';
 import { useRouter, matchRoute, navigate } from '@/lib/router';
+import { supabase } from '@/lib/supabase';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { HomePage } from '@/pages/HomePage';
@@ -17,6 +19,31 @@ import { SitePage } from '@/pages/SitePage';
 function AppContent() {
   const { route } = useRouter();
   const path = route.path;
+
+  useEffect(() => {
+    const applyFavicon = (url: string) => {
+      const normalized = url?.trim() || '/favicon.svg';
+      const current = document.querySelector('link[rel~="icon"]') as HTMLLinkElement | null;
+      if (current) {
+        current.href = normalized;
+        return;
+      }
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = normalized;
+      document.head.appendChild(link);
+    };
+
+    let active = true;
+    supabase.from('site_settings').select('value').eq('key', 'site_favicon_url').maybeSingle().then(({ data }) => {
+      if (!active) return;
+      applyFavicon(data?.value || '/favicon.svg');
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Admin routes (no public header/footer)
   if (path === '/admin') return <AdminDashboard />;

@@ -5,6 +5,7 @@ import { defaultSitePages, type SitePageContent, type SitePageSlug } from '@/lib
 
 const pageOrder: SitePageSlug[] = ['privacy', 'terms', 'contact'];
 const DEFAULT_HERO_BACKGROUND = '/dinebox-scan-background.jpeg';
+const DEFAULT_FAVICON = '/favicon.svg';
 
 export function AdminSitePages() {
   const [pages, setPages] = useState<Record<SitePageSlug, SitePageContent>>(defaultSitePages);
@@ -14,6 +15,10 @@ export function AdminSitePages() {
   const [savingHero, setSavingHero] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
   const [heroError, setHeroError] = useState('');
+  const [faviconUrl, setFaviconUrl] = useState(DEFAULT_FAVICON);
+  const [savingFavicon, setSavingFavicon] = useState(false);
+  const [uploadingFavicon, setUploadingFavicon] = useState(false);
+  const [faviconError, setFaviconError] = useState('');
   const [pageError, setPageError] = useState('');
   const [footerLinks, setFooterLinks] = useState({
     instagram: 'https://instagram.com',
@@ -35,6 +40,8 @@ export function AdminSitePages() {
     });
     supabase.from('site_settings').select('value').eq('key', 'homepage_hero_image_url').maybeSingle()
       .then(({ data }) => { if (data?.value) setHeroUrl(data.value); });
+    supabase.from('site_settings').select('value').eq('key', 'site_favicon_url').maybeSingle()
+      .then(({ data }) => { if (data?.value) setFaviconUrl(data.value); else setFaviconUrl(DEFAULT_FAVICON); });
     supabase.from('site_settings').select('key, value').in('key', ['footer_instagram_url', 'footer_facebook_url', 'footer_email_url', 'footer_message_url']).then(({ data }) => {
       if (!data) return;
       const values = Object.fromEntries(data.map((item) => [item.key, item.value])) as Record<string, string | null>;
@@ -80,6 +87,18 @@ export function AdminSitePages() {
     });
     setSavingHero(false);
     if (error) setHeroError(error.message);
+  };
+
+  const saveFavicon = async () => {
+    setSavingFavicon(true);
+    setFaviconError('');
+    const { error } = await supabase.from('site_settings').upsert({
+      key: 'site_favicon_url',
+      value: faviconUrl.trim() || DEFAULT_FAVICON,
+      updated_at: new Date().toISOString(),
+    });
+    setSavingFavicon(false);
+    if (error) setFaviconError(error.message);
   };
 
   const saveFooterLinks = async () => {
@@ -135,6 +154,28 @@ export function AdminSitePages() {
     setUploadingHero(false);
   };
 
+  const uploadFavicon = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/') || file.size > 2 * 1024 * 1024) {
+      setFaviconError('Choose an image smaller than 2 MB.');
+      return;
+    }
+    setUploadingFavicon(true);
+    setFaviconError('');
+    const extension = file.name.split('.').pop()?.toLowerCase() || 'png';
+    const path = `site-assets/favicon-${crypto.randomUUID()}.${extension}`;
+    const { error } = await supabase.storage.from('restaurant-media').upload(path, file, { contentType: file.type, upsert: false });
+    if (error) {
+      setFaviconError(error.message);
+    } else {
+      const { data } = supabase.storage.from('restaurant-media').getPublicUrl(path);
+      setFaviconUrl(data.publicUrl);
+    }
+    setUploadingFavicon(false);
+  };
+
   return (
     <div className="animate-fade-in max-w-3xl">
       <div className="flex items-start gap-3 mb-6">
@@ -170,6 +211,28 @@ export function AdminSitePages() {
             <Save className="w-4 h-4" /> {savingFooterLinks ? 'Saving...' : footerLinksSaved ? 'Saved' : 'Save footer links'}
           </button>
           {footerLinkError && <p className="mt-3 text-xs text-red-500">{footerLinkError}</p>}
+        </section>
+
+        <section className="bg-white rounded-2xl border border-beige/40 p-5 sm:p-6">
+          <h2 className="font-semibold text-charcoal">Site favicon</h2>
+          <p className="text-xs text-muted-text mt-1">This icon appears in the browser tab and bookmarks.</p>
+          <div className="mt-4 flex items-center gap-3 rounded-xl border border-beige/40 bg-cream/40 p-3">
+            <img src={faviconUrl || DEFAULT_FAVICON} alt="Favicon preview" className="h-10 w-10 rounded-lg object-contain bg-white p-1" />
+            <p className="text-sm text-charcoal break-all">{faviconUrl || DEFAULT_FAVICON}</p>
+          </div>
+          <label className="block text-sm font-medium text-charcoal mt-5">Favicon URL</label>
+          <input value={faviconUrl} onChange={(event) => setFaviconUrl(event.target.value)} className="input-field mt-2" placeholder="https://..." />
+          <div className="flex flex-wrap gap-3 mt-4">
+            <label className="btn-outline cursor-pointer">
+              {uploadingFavicon ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
+              {uploadingFavicon ? 'Uploading...' : 'Upload favicon'}
+              <input type="file" accept="image/*" onChange={uploadFavicon} disabled={uploadingFavicon} className="sr-only" />
+            </label>
+            <button onClick={saveFavicon} disabled={savingFavicon || uploadingFavicon} className="btn-primary disabled:opacity-60">
+              <Save className="w-4 h-4" /> {savingFavicon ? 'Saving...' : 'Save favicon'}
+            </button>
+          </div>
+          {faviconError && <p className="mt-3 text-xs text-red-500">{faviconError}</p>}
         </section>
 
         <section className="bg-white rounded-2xl border border-beige/40 p-5 sm:p-6">
