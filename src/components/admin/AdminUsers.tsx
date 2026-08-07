@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, Shield, UserRound } from 'lucide-react';
+import { Search, Shield, UserRound, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth';
 
@@ -17,6 +17,7 @@ export function AdminUsers() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -34,6 +35,20 @@ export function AdminUsers() {
     await supabase.from('users').update({ role: nextRole }).eq('id', user.id);
     await load();
     setUpdatingId(null);
+  };
+
+  const deleteUser = async (user: AdminUser) => {
+    if (user.id === session?.user.id) return;
+    const confirmed = window.confirm(`Delete ${user.full_name || user.email}? This action cannot be undone.`);
+    if (!confirmed) return;
+
+    setDeletingId(user.id);
+    const { error } = await supabase.from('users').delete().eq('id', user.id);
+    setDeletingId(null);
+
+    if (!error) {
+      await load();
+    }
   };
 
   const visibleUsers = users.filter((user) =>
@@ -70,15 +85,26 @@ export function AdminUsers() {
                   <p className="text-xs text-muted-text truncate">{user.email} · Joined {new Date(user.created_at).toLocaleDateString('en-SG')}</p>
                 </div>
                 <span className={`badge capitalize ${isAdmin ? 'bg-orange/10 text-orange-600' : 'bg-cream text-muted-text'}`}>{user.role}</span>
-                <button
-                  onClick={() => changeRole(user)}
-                  disabled={isCurrentUser || updatingId === user.id}
-                  className="btn-outline text-xs !py-2 disabled:cursor-not-allowed disabled:opacity-45"
-                  title={isCurrentUser ? 'You cannot change your own role' : undefined}
-                >
-                  <Shield className="w-3.5 h-3.5" />
-                  {updatingId === user.id ? 'Saving...' : isAdmin ? 'Remove admin' : 'Make admin'}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => changeRole(user)}
+                    disabled={isCurrentUser || updatingId === user.id}
+                    className="btn-outline text-xs !py-2 disabled:cursor-not-allowed disabled:opacity-45"
+                    title={isCurrentUser ? 'You cannot change your own role' : undefined}
+                  >
+                    <Shield className="w-3.5 h-3.5" />
+                    {updatingId === user.id ? 'Saving...' : isAdmin ? 'Remove admin' : 'Make admin'}
+                  </button>
+                  <button
+                    onClick={() => deleteUser(user)}
+                    disabled={isCurrentUser || deletingId === user.id}
+                    className="btn-outline text-xs !py-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 disabled:cursor-not-allowed disabled:opacity-45"
+                    title={isCurrentUser ? 'You cannot delete your own account' : undefined}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    {deletingId === user.id ? 'Deleting...' : 'Delete'}
+                  </button>
+                </div>
               </div>
             );
           })}

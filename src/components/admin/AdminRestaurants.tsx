@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Search, BadgeCheck, Star, Ban, Check, X, ExternalLink } from 'lucide-react';
+import { Search, BadgeCheck, Star, Ban, Check, X, ExternalLink, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { DEFAULT_RESTAURANT_LOGO } from '@/lib/restaurant-logo';
 import { navigate } from '@/lib/router';
@@ -10,6 +10,7 @@ export function AdminRestaurants() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<string>('all');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const load = () => {
     let q = supabase.from('restaurants').select('*').order('created_at', { ascending: false });
@@ -33,6 +34,19 @@ export function AdminRestaurants() {
   const toggleFeatured = async (r: Restaurant) => {
     await supabase.from('restaurants').update({ featured: !r.featured, featured_at: !r.featured ? new Date().toISOString() : null }).eq('id', r.id);
     load();
+  };
+
+  const deleteRestaurant = async (restaurant: Restaurant) => {
+    const confirmed = window.confirm(`Delete ${restaurant.name}? This action cannot be undone.`);
+    if (!confirmed) return;
+
+    setDeletingId(restaurant.id);
+    const { error } = await supabase.from('restaurants').delete().eq('id', restaurant.id);
+    setDeletingId(null);
+
+    if (!error) {
+      load();
+    }
   };
 
   const filters = ['all', 'pending', 'approved', 'suspended', 'closed'];
@@ -89,6 +103,7 @@ export function AdminRestaurants() {
                 )}
                 <button onClick={() => toggleVerified(r)} title="Toggle Verified" className={`p-2 rounded-lg ${r.verified ? 'bg-orange/10 text-orange' : 'bg-cream text-muted-text'}`}><BadgeCheck className="w-4 h-4" /></button>
                 <button onClick={() => toggleFeatured(r)} title="Toggle Featured" className={`p-2 rounded-lg ${r.featured ? 'bg-orange/10 text-orange' : 'bg-cream text-muted-text'}`}><Star className={`w-4 h-4 ${r.featured ? 'fill-orange' : ''}`} /></button>
+                <button onClick={() => deleteRestaurant(r)} disabled={deletingId === r.id} title="Delete" className="p-2 rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 disabled:opacity-60"><Trash2 className="w-4 h-4" /></button>
                 <button onClick={() => navigate(`/r/${r.slug}`)} title="View" className="p-2 rounded-lg bg-cream text-charcoal hover:bg-beige"><ExternalLink className="w-4 h-4" /></button>
               </div>
             </div>

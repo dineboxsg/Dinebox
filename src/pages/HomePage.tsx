@@ -86,11 +86,7 @@ export function HomePage() {
   const rankedRestaurants = rankings
     .map((ranking) => ranking.restaurant)
     .filter((restaurant): restaurant is Restaurant => Boolean(restaurant));
-  const rankedRestaurantIds = new Set(rankedRestaurants.map((restaurant) => restaurant.id));
-  const trendingRestaurants = [
-    ...rankedRestaurants,
-    ...restaurants.filter((restaurant) => !rankedRestaurantIds.has(restaurant.id)),
-  ].slice(0, 6);
+  const trendingRestaurants = rankedRestaurants.slice(0, 6);
 
   return (
     <div className="animate-fade-in bg-warm-white">
@@ -165,7 +161,7 @@ export function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="flex overflow-x-auto no-scrollbar gap-5 pb-2 sm:grid sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+            <div className="flex overflow-x-auto no-scrollbar gap-3 pb-2 sm:grid sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
               {trendingRestaurants.map((rest) => {
                 const ranking = rankings.find(r => r.restaurant_id === rest.id);
                 return <RestaurantCard key={rest.id} restaurant={rest} ranking={ranking} variant="horizontal" />;
@@ -291,7 +287,7 @@ export function HomePage() {
           {loading ? (
             <div className="flex overflow-x-auto no-scrollbar gap-5 pb-2">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-72 h-44 rounded-2xl bg-cream animate-pulse" />
+                <div key={i} className="flex-shrink-0 w-72 h-64 rounded-[1.5rem] bg-cream animate-pulse" />
               ))}
             </div>
           ) : (

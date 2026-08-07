@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react';
 import { navigate } from '@/lib/router';
 import { Instagram, Facebook, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 const discoverLinks = [
   { label: 'Trending', path: '/trending' },
@@ -21,6 +23,26 @@ const legalLinks = [
 ];
 
 export function Footer() {
+  const [footerLinks, setFooterLinks] = useState({
+    instagram: 'https://instagram.com',
+    facebook: 'https://facebook.com',
+    email: 'mailto:hello@dinebox.sg',
+    message: 'https://wa.me/6581609698?text=Hi%20DineBox%2C%20I%27d%20like%20more%20information.',
+  });
+
+  useEffect(() => {
+    supabase.from('site_settings').select('key, value').in('key', ['footer_instagram_url', 'footer_facebook_url', 'footer_email_url', 'footer_message_url']).then(({ data }) => {
+      if (!data) return;
+      const values = Object.fromEntries(data.map((item) => [item.key, item.value])) as Record<string, string | null>;
+      setFooterLinks((current) => ({
+        instagram: values.footer_instagram_url || current.instagram,
+        facebook: values.footer_facebook_url || current.facebook,
+        email: values.footer_email_url || current.email,
+        message: values.footer_message_url || current.message,
+      }));
+    });
+  }, []);
+
   return (
     <footer className="relative bg-charcoal text-warm-white mt-20 overflow-hidden">
       {/* Decorative gradient glow */}
@@ -43,7 +65,7 @@ export function Footer() {
             </p>
             <div className="flex items-center justify-center lg:justify-start gap-3 mt-8">
               <a
-                href="https://instagram.com"
+                href={footerLinks.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -52,7 +74,7 @@ export function Footer() {
                 <Instagram size={18} />
               </a>
               <a
-                href="https://facebook.com"
+                href={footerLinks.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
@@ -61,7 +83,7 @@ export function Footer() {
                 <Facebook size={18} />
               </a>
               <a
-                href="mailto:hello@dinebox.sg"
+                href={footerLinks.email}
                 aria-label="Email"
                 className="w-10 h-10 rounded-full bg-warm-white/5 border border-warm-white/10 flex items-center justify-center text-warm-white/70 hover:bg-orange hover:text-charcoal hover:border-orange transition-all duration-300 hover:scale-110"
               >
@@ -77,7 +99,7 @@ export function Footer() {
               Message the DineBox team on WhatsApp and we’ll be happy to help.
             </p>
             <a
-              href="https://wa.me/6581609698?text=Hi%20DineBox%2C%20I%27d%20like%20more%20information."
+              href={footerLinks.message}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-orange text-charcoal font-semibold text-sm hover:bg-orange-400 transition-all duration-300 hover:shadow-lg hover:shadow-orange/30"

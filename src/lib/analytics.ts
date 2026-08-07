@@ -34,7 +34,11 @@ export async function trackEvent(
 
     if (insertError) throw insertError;
 
-    await supabase.rpc('refresh_dinebox_rankings').catch(() => undefined);
+    try {
+      await supabase.rpc('refresh_dinebox_rankings');
+    } catch {
+      // ignore refresh failures so analytics tracking stays non-blocking
+    }
   } catch {
     // silent fail - analytics shouldn't break UX
   }

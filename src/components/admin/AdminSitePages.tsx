@@ -15,6 +15,15 @@ export function AdminSitePages() {
   const [uploadingHero, setUploadingHero] = useState(false);
   const [heroError, setHeroError] = useState('');
   const [pageError, setPageError] = useState('');
+  const [footerLinks, setFooterLinks] = useState({
+    instagram: 'https://instagram.com',
+    facebook: 'https://facebook.com',
+    email: 'mailto:hello@dinebox.sg',
+    message: 'https://wa.me/6581609698?text=Hi%20DineBox%2C%20I%27d%20like%20more%20information.',
+  });
+  const [savingFooterLinks, setSavingFooterLinks] = useState(false);
+  const [footerLinkError, setFooterLinkError] = useState('');
+  const [footerLinksSaved, setFooterLinksSaved] = useState(false);
 
   useEffect(() => {
     supabase.from('site_pages').select('*').then(({ data }) => {
@@ -26,6 +35,16 @@ export function AdminSitePages() {
     });
     supabase.from('site_settings').select('value').eq('key', 'homepage_hero_image_url').maybeSingle()
       .then(({ data }) => { if (data?.value) setHeroUrl(data.value); });
+    supabase.from('site_settings').select('key, value').in('key', ['footer_instagram_url', 'footer_facebook_url', 'footer_email_url', 'footer_message_url']).then(({ data }) => {
+      if (!data) return;
+      const values = Object.fromEntries(data.map((item) => [item.key, item.value])) as Record<string, string | null>;
+      setFooterLinks((current) => ({
+        instagram: values.footer_instagram_url || current.instagram,
+        facebook: values.footer_facebook_url || current.facebook,
+        email: values.footer_email_url || current.email,
+        message: values.footer_message_url || current.message,
+      }));
+    });
   }, []);
 
   const update = (slug: SitePageSlug, key: 'title' | 'content', value: string) => {
@@ -63,6 +82,37 @@ export function AdminSitePages() {
     if (error) setHeroError(error.message);
   };
 
+  const saveFooterLinks = async () => {
+    setSavingFooterLinks(true);
+    setFooterLinkError('');
+    const updates = [
+      { key: 'footer_instagram_url', value: footerLinks.instagram.trim() },
+      { key: 'footer_facebook_url', value: footerLinks.facebook.trim() },
+      { key: 'footer_email_url', value: footerLinks.email.trim() },
+      { key: 'footer_message_url', value: footerLinks.message.trim() },
+    ];
+
+    const results = await Promise.all(updates.map(({ key, value }) => supabase.from('site_settings').upsert({
+      key,
+      value,
+      updated_at: new Date().toISOString(),
+    })));
+
+    setSavingFooterLinks(false);
+    const failed = results.find((result) => result.error);
+    if (failed?.error) {
+      setFooterLinkError(failed.error.message);
+      return;
+    }
+
+    setFooterLinksSaved(true);
+    window.setTimeout(() => setFooterLinksSaved(false), 2000);
+  };
+
+  const updateFooterLink = (key: keyof typeof footerLinks, value: string) => {
+    setFooterLinks((current) => ({ ...current, [key]: value }));
+  };
+
   const uploadHero = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
@@ -95,6 +145,33 @@ export function AdminSitePages() {
         </div>
       </div>
       <div className="space-y-6">
+        <section className="bg-white rounded-2xl border border-beige/40 p-5 sm:p-6">
+          <h2 className="font-semibold text-charcoal">Footer links</h2>
+          <p className="text-xs text-muted-text mt-1">Update the social and contact links shown in the public footer.</p>
+          <div className="mt-5 space-y-4">
+            <label className="block">
+              <span className="text-sm font-medium text-charcoal">Instagram URL</span>
+              <input value={footerLinks.instagram} onChange={(event) => updateFooterLink('instagram', event.target.value)} className="input-field mt-2" placeholder="https://instagram.com/..." />
+            </label>
+            <label className="block">
+              <span className="text-sm font-medium text-charcoal">Facebook URL</span>
+              <input value={footerLinks.facebook} onChange={(event) => updateFooterLink('facebook', event.target.value)} className="input-field mt-2" placeholder="https://facebook.com/..." />
+            </label>
+            <label className="block">
+              <span className="text-sm font-medium text-charcoal">Email URL</span>
+              <input value={footerLinks.email} onChange={(event) => updateFooterLink('email', event.target.value)} className="input-field mt-2" placeholder="mailto:hello@domain.com" />
+            </label>
+            <label className="block">
+              <span className="text-sm font-medium text-charcoal">WhatsApp / message URL</span>
+              <input value={footerLinks.message} onChange={(event) => updateFooterLink('message', event.target.value)} className="input-field mt-2" placeholder="https://wa.me/..." />
+            </label>
+          </div>
+          <button onClick={saveFooterLinks} disabled={savingFooterLinks} className="btn-primary mt-5 disabled:opacity-60">
+            <Save className="w-4 h-4" /> {savingFooterLinks ? 'Saving...' : footerLinksSaved ? 'Saved' : 'Save footer links'}
+          </button>
+          {footerLinkError && <p className="mt-3 text-xs text-red-500">{footerLinkError}</p>}
+        </section>
+
         <section className="bg-white rounded-2xl border border-beige/40 p-5 sm:p-6">
           <h2 className="font-semibold text-charcoal">Homepage hero background</h2>
           <p className="text-xs text-muted-text mt-1">This photo appears behind “What’s happening in Singapore’s F&amp;B scene?”.</p>
